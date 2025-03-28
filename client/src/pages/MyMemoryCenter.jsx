@@ -1,10 +1,10 @@
-// src/pages/MyMemoryCenter.jsx
 import React, { useState } from "react";
 import { useMemory } from "../context/MemoryContext";
 import MemoryCard from "../components/MemoryViews/MemoryCard";
 import MemoryForm from "../components/MemoryEditor/MemoryForm";
 import TimelineView from "../components/MemoryViews/TimelineView";
-import MapView from "../components/MemoryViews/MapView"; // 👈 NEW: import MapView
+import MapView from "../components/MemoryViews/MapView";
+import WelcomeScreen from "../components/MemoryViews/WelcomeScreen"; // ✅ NEW
 
 const MyMemoryCenter = () => {
   const { memories, deleteMemory } = useMemory();
@@ -16,6 +16,13 @@ const MyMemoryCenter = () => {
   const [sortBy, setSortBy] = useState("date-desc");
 
   const [activeView, setActiveView] = useState("card");
+
+  // ✅ New: welcome screen flags per view
+  const [showWelcome, setShowWelcome] = useState({
+    card: true,
+    timeline: true,
+    map: true,
+  });
 
   const handleEdit = (memory) => {
     setEditingMemory(memory);
@@ -88,8 +95,16 @@ const MyMemoryCenter = () => {
         />
       )}
 
-      {/* 🧠 CONDITIONAL VIEWS */}
-      {activeView === "card" && (
+      {/* ✨ WelcomeScreen for each view */}
+
+      {activeView === "card" && showWelcome.card ? (
+        <WelcomeScreen
+          title="Welcome to Card View"
+          description="This view displays your memories as individual cards. Some may feel intense. Consider working with a therapist while using this feature."
+          onContinue={() => setShowWelcome((prev) => ({ ...prev, card: false }))}
+          onCancel={() => setActiveView("")}
+        />
+      ) : activeView === "card" ? (
         <>
           <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-6 space-y-2 md:space-y-0">
             <input
@@ -140,15 +155,29 @@ const MyMemoryCenter = () => {
             </div>
           )}
         </>
-      )}
+      ) : null}
 
-      {activeView === "timeline" && (
+      {activeView === "timeline" && showWelcome.timeline ? (
+        <WelcomeScreen
+          title="Welcome to Timeline View"
+          description="This chronological view may surface difficult memories. Please take care of yourself and proceed at your own pace."
+          onContinue={() => setShowWelcome((prev) => ({ ...prev, timeline: false }))}
+          onCancel={() => setActiveView("")}
+        />
+      ) : activeView === "timeline" ? (
         <TimelineView memories={memories} />
-      )}
+      ) : null}
 
-      {activeView === "map" && (
+      {activeView === "map" && showWelcome.map ? (
+        <WelcomeScreen
+          title="Welcome to Map View"
+          description="This emotional map helps you visualize feelings across your memories. Please proceed gently and ground yourself as needed."
+          onContinue={() => setShowWelcome((prev) => ({ ...prev, map: false }))}
+          onCancel={() => setActiveView("")}
+        />
+      ) : activeView === "map" ? (
         <MapView />
-      )}
+      ) : null}
     </div>
   );
 };
