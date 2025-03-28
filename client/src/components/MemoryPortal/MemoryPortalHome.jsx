@@ -1,4 +1,3 @@
-// src/components/MemoryPortal/MemoryPortalHome.jsx
 import React, { useState, useEffect } from 'react';
 import DailyCheckin from './DailyCheckin';
 import LifeStageSelection from './LifeStageSelection';
@@ -7,6 +6,8 @@ import MemoryEntry from './MemoryEntry';
 import ReflectionStep from './ReflectionStep';
 import FinalConfirmation from './FinalConfirmation';
 import { useMemory } from '../../context/MemoryContext';
+import GuidedJourney from './GuidedJourney';
+import ChildhoodProfileBuilder from './Childhood/ChildhoodProfileBuilder'; // ✅ NEW
 
 const affirmations = [
   "You are safe here.",
@@ -23,6 +24,8 @@ const MemoryPortalHome = () => {
   const [currentAffirmationIndex, setCurrentAffirmationIndex] = useState(0);
   const [selection, setSelection] = useState(null); // 'lifeStage' or 'emotional'
   const [selectedStage, setSelectedStage] = useState(null);
+  const [journeyComplete, setJourneyComplete] = useState(false);
+  const [profileData, setProfileData] = useState(null); // ✅ stores GuidedJourney responses
 
   const { currentStep, setCurrentStep } = useMemory();
 
@@ -34,11 +37,12 @@ const MemoryPortalHome = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Advance to memory entry after guided journey
   useEffect(() => {
-    if (selectedStage) {
+    if (journeyComplete) {
       setCurrentStep(2);
     }
-  }, [selectedStage, setCurrentStep]);
+  }, [journeyComplete, setCurrentStep]);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-cover bg-center px-4">
@@ -65,7 +69,7 @@ const MemoryPortalHome = () => {
           <DailyCheckin onComplete={() => setCheckinDone(true)} />
         ) : (
           <>
-            {/* Step 1: Choose category type */}
+            {/* Step 1: Choose how to begin */}
             {currentStep === 0 && (
               <div className="mt-6 text-center">
                 <h2 className="text-xl md:text-2xl text-rose-700 mb-6">
@@ -94,21 +98,39 @@ const MemoryPortalHome = () => {
               </div>
             )}
 
-            {/* Step 2: Select category */}
-            {currentStep === 1 && selection === 'lifeStage' && (
+            {/* Step 2: Life Stage Selection */}
+            {currentStep === 1 && selection === 'lifeStage' && !selectedStage && (
               <LifeStageSelection setSelectedStage={setSelectedStage} />
             )}
+
+            {/* Step 2B: Guided Journey by Stage */}
+            {currentStep === 1 && selection === 'lifeStage' && selectedStage && (
+              <GuidedJourney
+                stage={selectedStage}
+                onComplete={(responses) => {
+                  setProfileData(responses);        // ✅ Save journey responses
+                  setJourneyComplete(true);         // ✅ Move to next step
+                }}
+              />
+            )}
+
+            {/* Step 2: Emotional Category path */}
             {currentStep === 1 && selection === 'emotional' && (
               <EmotionalCategorySelection />
             )}
 
-            {/* Step 3: Memory entry form */}
-            {currentStep === 2 && <MemoryEntry />}
+            {/* Step 3: Show profile summary after Guided Journey */}
+            {currentStep === 2 && profileData && (
+              <ChildhoodProfileBuilder responses={profileData} />
+            )}
 
-            {/* Step 4: Reflection */}
+            {/* Step 4: Memory Entry */}
+            {currentStep === 2 && !profileData && <MemoryEntry />}
+
+            {/* Step 5: Reflection */}
             {currentStep === 3 && <ReflectionStep />}
 
-            {/* Step 5: Final Confirmation */}
+            {/* Step 6: Final Confirmation */}
             {currentStep === 4 && <FinalConfirmation />}
           </>
         )}
