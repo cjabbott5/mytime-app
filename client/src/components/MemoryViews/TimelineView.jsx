@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from "react";
-import { useMemory } from "../context/MemoryContext";
-import MemoryCard from "../components/MemoryViews/MemoryCard";
-import FilterBar from "../components/MemoryEditor/FilterBar";
+// components/MemoryViews/TimelineView.jsx
+import React, { useMemo, useState } from "react";
+import MemoryCard from "./MemoryCard";
+import FilterBar from "../MemoryEditor/FilterBar";
 import { motion } from "framer-motion";
 
 const affirmations = [
@@ -12,9 +12,7 @@ const affirmations = [
   "Breathe in. Breathe out. You're held. 🕊️"
 ];
 
-const MyTimeline = () => {
-  const { memories } = useMemory();
-
+const TimelineView = ({ memories }) => {
   const [selectedMoods, setSelectedMoods] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
 
@@ -69,16 +67,7 @@ const MyTimeline = () => {
   };
 
   return (
-    <div className="bg-rose-50 min-h-screen px-4 sm:px-8 py-10">
-      <motion.h1
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-4xl font-bold text-rose-600 mb-8 text-center"
-      >
-        My Memory Timeline
-      </motion.h1>
-
+    <div className="py-6">
       <FilterBar
         availableMoods={allMoods}
         availableTags={allTags}
@@ -113,14 +102,12 @@ const MyTimeline = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: idx * 0.05 }}
-                    className="bg-white shadow-lg rounded-lg p-6 border-l-4 border-rose-300 relative"
                   >
                     <MemoryCard memory={memory} viewMode="timeline" />
                   </motion.div>
                 ))}
               </div>
 
-              {/* ✨ Micro-affirmation after each year */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -137,4 +124,4 @@ const MyTimeline = () => {
   );
 };
 
-export default MyTimeline;
+export default TimelineView;

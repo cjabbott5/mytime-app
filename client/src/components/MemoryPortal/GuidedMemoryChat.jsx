@@ -1,5 +1,4 @@
-// src/components/MemoryPortal/GuidedMemoryChat.jsx
-
+// GuidedMemoryChat.jsx
 import React, { useState } from 'react';
 import WelcomeScreen from './WelcomeScreen';
 import LifeStageSelection from './LifeStageSelection';
@@ -12,7 +11,18 @@ import CalmCorner from './CalmCorner';
 
 const GuidedMemoryChat = () => {
   const [step, setStep] = useState(0);
-  const [selectedPath, setSelectedPath] = useState(null); // 'lifeStage' or 'emotional'
+  const [selectedPath, setSelectedPath] = useState(null);
+
+  const [memoryDraft, setMemoryDraft] = useState({
+    title: '',
+    description: '',
+    date: new Date().toISOString(),
+    image: '',
+    mood: '',
+    tags: [],
+    reflection: '',
+    isPrivate: false,
+  });
 
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => Math.max(0, prev - 1));
@@ -28,45 +38,45 @@ const GuidedMemoryChat = () => {
             }} />
           </StepLayout>
         );
-
       case 1:
-        if (selectedPath === 'lifeStage') {
-          return (
-            <StepLayout>
-              <LifeStageSelection onNext={nextStep} />
-            </StepLayout>
-          );
-        }
-        if (selectedPath === 'emotional') {
-          return (
-            <StepLayout>
-              <EmotionalCategorySelection onNext={nextStep} />
-            </StepLayout>
-          );
-        }
-        return null;
-
+        return (
+          <StepLayout>
+            {selectedPath === 'lifeStage' && (
+              <LifeStageSelection setMemoryDraft={setMemoryDraft} onNext={nextStep} />
+            )}
+            {selectedPath === 'emotional' && (
+              <EmotionalCategorySelection setMemoryDraft={setMemoryDraft} onNext={nextStep} />
+            )}
+          </StepLayout>
+        );
       case 2:
         return (
           <StepLayout>
-            <MemoryEntry onNext={nextStep} onBack={prevStep} />
+            <MemoryEntry
+              memoryDraft={memoryDraft}
+              setMemoryDraft={setMemoryDraft}
+              onNext={nextStep}
+              onBack={prevStep}
+            />
           </StepLayout>
         );
-
       case 3:
         return (
           <StepLayout>
-            <ReflectionStep onNext={nextStep} onBack={prevStep} />
+            <ReflectionStep
+              memoryDraft={memoryDraft}
+              setMemoryDraft={setMemoryDraft}
+              onNext={nextStep}
+              onBack={prevStep}
+            />
           </StepLayout>
         );
-
       case 4:
         return (
           <StepLayout>
-            <FinalConfirmation />
+            <FinalConfirmation memoryDraft={memoryDraft} />
           </StepLayout>
         );
-
       default:
         return null;
     }

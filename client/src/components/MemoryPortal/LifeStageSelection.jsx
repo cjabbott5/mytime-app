@@ -1,34 +1,24 @@
-// src/components/MemoryPortal/LifeStageSelection.jsx
 import React from 'react';
 
-const LifeStageSelection = ({ setSelectedStage }) => {
-  const lifeStages = [
-    { label: 'Childhood (0-12)', value: 'childhood' },
-    { label: 'Teenage Years (13-19)', value: 'teenage' },
-    { label: 'Young Adult/College (20-25)', value: 'youngAdult' },
-    { label: 'Adult Life (26+)', value: 'adult' },
-  ];
-
-  const handleLifeStageClick = (stage) => {
-    console.log(`Selected Life Stage: ${stage}`);
-    setSelectedStage(stage); // Send selected stage up to parent
+const LifeStageSelection = ({ onNext, setMemoryDraft }) => {
+  const handleSelect = (label) => {
+    console.log("Selected Life Stage:", label);
+    setMemoryDraft((prev) => ({
+      ...prev,
+      tags: [...(prev?.tags || []), label.toLowerCase()],
+    }));
+    onNext();
   };
 
   return (
-    <div className="mt-6 text-center">
-      <h3 className="text-lg font-semibold text-rose-700 mb-4">
-        Select a Life Stage
-      </h3>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
-        {lifeStages.map((stage) => (
-          <button
-            key={stage.value}
-            onClick={() => handleLifeStageClick(stage.label)} // or use stage.value if preferred
-            className="bg-rose-500 text-white px-4 py-2 rounded shadow hover:bg-rose-600 transition"
-          >
-            {stage.label}
-          </button>
-        ))}
+    <div className="space-y-4 text-center">
+      <h2 className="text-xl font-semibold text-pink-700">Select a Life Stage</h2>
+
+      <div className="flex flex-wrap justify-center gap-4 pt-4">
+        <button onClick={() => handleSelect("childhood")} className="bg-pink-500 text-white px-4 py-2 rounded shadow">Childhood (0–12)</button>
+        <button onClick={() => handleSelect("teen")} className="bg-pink-500 text-white px-4 py-2 rounded shadow">Teenage Years (13–19)</button>
+        <button onClick={() => handleSelect("college")} className="bg-pink-500 text-white px-4 py-2 rounded shadow">Young Adult/College (20–25)</button>
+        <button onClick={() => handleSelect("adulthood")} className="bg-pink-500 text-white px-4 py-2 rounded shadow">Adult Life (26+)</button>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useMemory } from "../context/MemoryContext";
+import { useMemory } from "../../context/MemoryContext";
 import { format } from "date-fns";
 
 const initialForm = {

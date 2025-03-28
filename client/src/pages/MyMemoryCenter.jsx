@@ -1,18 +1,21 @@
 // src/pages/MyMemoryCenter.jsx
 import React, { useState } from "react";
 import { useMemory } from "../context/MemoryContext";
-import MemoryCard from "../components/MemoryCard";
-import MemoryForm from "../components/MemoryForm";
+import MemoryCard from "../components/MemoryViews/MemoryCard";
+import MemoryForm from "../components/MemoryEditor/MemoryForm";
+import TimelineView from "../components/MemoryViews/TimelineView";
+import MapView from "../components/MemoryViews/MapView"; // 👈 NEW: import MapView
 
 const MyMemoryCenter = () => {
   const { memories, deleteMemory } = useMemory();
-  console.log("All memories:", memories);
   const [showForm, setShowForm] = useState(false);
   const [editingMemory, setEditingMemory] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterTag, setFilterTag] = useState("");
   const [filterEmotion, setFilterEmotion] = useState("");
   const [sortBy, setSortBy] = useState("date-desc");
+
+  const [activeView, setActiveView] = useState("card");
 
   const handleEdit = (memory) => {
     setEditingMemory(memory);
@@ -27,11 +30,9 @@ const MyMemoryCenter = () => {
   const filteredMemories = memories
     .filter((memory) => {
       const matchesSearch = memory.title.toLowerCase().includes(searchTerm.toLowerCase());
-
       const normalizedTags = memory.tags?.map((tag) => tag.toLowerCase()) || [];
       const inputTag = filterTag.replace("#", "").toLowerCase();
       const matchesTag = filterTag ? normalizedTags.includes(inputTag) : true;
-
       const matchesEmotion = filterEmotion
         ? memory.mood?.toLowerCase() === filterEmotion.toLowerCase()
         : true;
@@ -39,13 +40,8 @@ const MyMemoryCenter = () => {
       return matchesSearch && matchesTag && matchesEmotion;
     })
     .sort((a, b) => {
-      if (sortBy === "date-asc") {
-        return new Date(a.date) - new Date(b.date);
-      } else if (sortBy === "date-desc") {
-        return new Date(b.date) - new Date(a.date);
-      } else {
-        return 0;
-      }
+      if (sortBy === "date-asc") return new Date(a.date) - new Date(b.date);
+      else return new Date(b.date) - new Date(a.date);
     });
 
   return (
@@ -60,36 +56,26 @@ const MyMemoryCenter = () => {
         </button>
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-6 space-y-2 md:space-y-0">
-        <input
-          type="text"
-          placeholder="Search by title..."
-          className="px-4 py-2 border border-gray-300 rounded-md"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Filter by tag (e.g. #joy)"
-          className="px-4 py-2 border border-gray-300 rounded-md"
-          value={filterTag}
-          onChange={(e) => setFilterTag(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Filter by emotion (e.g. joyful)"
-          className="px-4 py-2 border border-gray-300 rounded-md"
-          value={filterEmotion}
-          onChange={(e) => setFilterEmotion(e.target.value)}
-        />
-        <select
-          className="px-4 py-2 border border-gray-300 rounded-md"
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
+      {/* 🔀 VIEW SWITCHER TABS */}
+      <div className="flex gap-4 mb-6">
+        <button
+          className={`px-4 py-2 rounded-md ${activeView === "card" ? "bg-rose-600 text-white" : "bg-white border text-rose-600"}`}
+          onClick={() => setActiveView("card")}
         >
-          <option value="date-desc">Newest First</option>
-          <option value="date-asc">Oldest First</option>
-        </select>
+          Card View
+        </button>
+        <button
+          className={`px-4 py-2 rounded-md ${activeView === "timeline" ? "bg-rose-600 text-white" : "bg-white border text-rose-600"}`}
+          onClick={() => setActiveView("timeline")}
+        >
+          Timeline View
+        </button>
+        <button
+          className={`px-4 py-2 rounded-md ${activeView === "map" ? "bg-rose-600 text-white" : "bg-white border text-rose-600"}`}
+          onClick={() => setActiveView("map")}
+        >
+          Map View
+        </button>
       </div>
 
       {showForm && (
@@ -102,21 +88,66 @@ const MyMemoryCenter = () => {
         />
       )}
 
-      {filteredMemories.length === 0 ? (
-        <p className="text-gray-500 italic">
-          No memories match your current filters. Try clearing or changing the filters above.
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredMemories.map((memory) => (
-            <MemoryCard
-              key={memory.id}
-              memory={memory}
-              onEdit={handleEdit}
-              onDelete={deleteMemory}
+      {/* 🧠 CONDITIONAL VIEWS */}
+      {activeView === "card" && (
+        <>
+          <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-6 space-y-2 md:space-y-0">
+            <input
+              type="text"
+              placeholder="Search by title..."
+              className="px-4 py-2 border border-gray-300 rounded-md"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
-          ))}
-        </div>
+            <input
+              type="text"
+              placeholder="Filter by tag (e.g. #joy)"
+              className="px-4 py-2 border border-gray-300 rounded-md"
+              value={filterTag}
+              onChange={(e) => setFilterTag(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Filter by emotion (e.g. joyful)"
+              className="px-4 py-2 border border-gray-300 rounded-md"
+              value={filterEmotion}
+              onChange={(e) => setFilterEmotion(e.target.value)}
+            />
+            <select
+              className="px-4 py-2 border border-gray-300 rounded-md"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="date-desc">Newest First</option>
+              <option value="date-asc">Oldest First</option>
+            </select>
+          </div>
+
+          {filteredMemories.length === 0 ? (
+            <p className="text-gray-500 italic">
+              No memories match your current filters. Try clearing or changing the filters above.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredMemories.map((memory) => (
+                <MemoryCard
+                  key={memory.id}
+                  memory={memory}
+                  onEdit={handleEdit}
+                  onDelete={deleteMemory}
+                />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {activeView === "timeline" && (
+        <TimelineView memories={memories} />
+      )}
+
+      {activeView === "map" && (
+        <MapView />
       )}
     </div>
   );

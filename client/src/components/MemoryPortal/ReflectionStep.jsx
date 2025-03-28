@@ -1,61 +1,44 @@
-// src/components/MemoryPortal/ReflectionStep.jsx
-import React, { useState } from 'react';
-import { useMemory } from '../../context/MemoryContext';
+import React from 'react';
 
-const feelings = [
-  "Empowering",
-  "Hard but helpful",
-  "Overwhelming",
-  "Numb",
-  "Confusing",
-  "Joyful"
-];
-
-const ReflectionStep = () => {
-  const { setCurrentStep } = useMemory();
-  const [selectedFeeling, setSelectedFeeling] = useState('');
-  const [notes, setNotes] = useState('');
-
-  const handleComplete = () => {
-    console.log({ selectedFeeling, notes });
-    setCurrentStep(4); // Proceed to FinalConfirmation
-  };
-
+const ReflectionStep = ({ memoryDraft, setMemoryDraft, onNext, onBack }) => {
   return (
-    <div className="space-y-6 text-left max-w-2xl mx-auto">
-      <h2 className="text-xl font-semibold text-pink-700 text-center">
-        How did it feel to recall that memory?
-      </h2>
+    <div className="space-y-6 max-w-2xl mx-auto">
+      <h2 className="text-xl font-semibold text-pink-700">Reflection</h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        {feelings.map((feeling) => (
-          <button
-            key={feeling}
-            onClick={() => setSelectedFeeling(feeling)}
-            className={`rounded-full px-4 py-2 text-sm font-medium border transition ${
-              selectedFeeling === feeling
-                ? 'bg-pink-500 text-white border-pink-500'
-                : 'border-gray-300 text-gray-700'
-            }`}
-          >
-            {feeling}
-          </button>
-        ))}
-      </div>
+      <p className="text-gray-600">What do you want to remember about this?</p>
 
       <textarea
-        placeholder="Want to share more about how it felt?"
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        className="w-full min-h-[120px] p-3 rounded border border-gray-300"
+        value={memoryDraft.reflection}
+        onChange={(e) =>
+          setMemoryDraft((prev) => ({ ...prev, reflection: e.target.value }))
+        }
+        className="w-full min-h-[140px] p-3 rounded border border-gray-300"
+        placeholder="Write your reflection..."
       />
 
-      <div className="text-right">
+      <label className="flex items-center space-x-2 text-sm">
+        <input
+          type="checkbox"
+          checked={memoryDraft.isPrivate}
+          onChange={(e) =>
+            setMemoryDraft((prev) => ({
+              ...prev,
+              isPrivate: e.target.checked,
+            }))
+          }
+        />
+        <span>Mark this memory as private</span>
+      </label>
+
+      <div className="flex justify-between pt-4">
+        <button onClick={onBack} className="text-sm text-gray-500 underline">
+          Back
+        </button>
         <button
-          onClick={handleComplete}
+          onClick={onNext}
           className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded shadow"
         >
-          Complete Reflection
+          Next
         </button>
       </div>
     </div>
