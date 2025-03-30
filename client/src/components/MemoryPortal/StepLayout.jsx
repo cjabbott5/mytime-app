@@ -1,5 +1,4 @@
 import React from 'react';
-import CalmCorner from './CalmCorner';
 
 const StepLayout = ({ children }) => {
   return (
@@ -13,10 +12,7 @@ const StepLayout = ({ children }) => {
 
       {/* Main Content Card */}
       <div className="relative z-10 max-w-3xl w-full bg-white bg-opacity-90 rounded-xl shadow-lg p-6 md:p-10 animate-fade-in transition-all duration-500 ease-out">
-        {/* Calm Corner */}
-        <div className="absolute top-4 right-4">
-          <CalmCorner />
-        </div>
+        {/* Removed CalmCorner import and component */}
 
         {/* Step Content */}
         {children}

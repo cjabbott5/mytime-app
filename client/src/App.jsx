@@ -6,7 +6,6 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
-import GuidedPortalPage from './pages/GuidedPortalPage';
 import Onboarding from './pages/Onboarding';
 import MyMemoryCenter from './pages/MyMemoryCenter';
 import MyTimeline from './pages/MyTimeline';
@@ -17,8 +16,13 @@ import { UserDataProvider } from './context/UserDataContext';
 import { MemoryProvider } from './context/MemoryContext';
 
 // Components
-import Layout from './components/Layout';
-import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/layout/Layout';
+import ProtectedRoute from './components/layout/ProtectedRoute';
+import GroundMe from './components/GroundMe/GroundMe';
+import MemoryCenter from './components/MemoryPortal/MemoryCenter';
+
+// ✅ NEW: The working Guided Memory Flow
+import GuidedMemoryChat from './components/MemoryPortal/GuidedMemoryChat';
 
 const AppRoutes = () => {
   const { user, authLoading } = useAuth();
@@ -93,7 +97,27 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Layout>
-              <GuidedPortalPage />
+              <GuidedMemoryChat />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ground-me"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <GroundMe />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/memory-center"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <MemoryCenter />
             </Layout>
           </ProtectedRoute>
         }

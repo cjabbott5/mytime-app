@@ -1,13 +1,11 @@
-// GuidedMemoryChat.jsx
-import React, { useState } from 'react';
-import WelcomeScreen from './WelcomeScreen';
+import React, { useState, useEffect } from 'react';
+import WelcomeScreen from './GuidedPortalWelcomeScreen';
 import LifeStageSelection from './LifeStageSelection';
 import EmotionalCategorySelection from './EmotionalCategorySelection';
 import MemoryEntry from './MemoryEntry';
 import ReflectionStep from './ReflectionStep';
 import FinalConfirmation from './FinalConfirmation';
 import StepLayout from './StepLayout';
-import CalmCorner from './CalmCorner';
 
 const GuidedMemoryChat = () => {
   const [step, setStep] = useState(0);
@@ -22,33 +20,62 @@ const GuidedMemoryChat = () => {
     tags: [],
     reflection: '',
     isPrivate: false,
+    category: '',
   });
 
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => Math.max(0, prev - 1));
+
+  // path will be either "lifeStage" or "emotional" based on user choice
+  const path =
+    selectedPath && typeof selectedPath === 'object' ? selectedPath.path : null;
+  const category =
+    selectedPath && typeof selectedPath === 'object' ? selectedPath.category : null;
+
+  // Update memoryDraft if user picks a category
+  useEffect(() => {
+    if (category) {
+      setMemoryDraft((prev) => ({ ...prev, category }));
+    }
+  }, [category]);
 
   const renderStep = () => {
     switch (step) {
       case 0:
         return (
           <StepLayout>
-            <WelcomeScreen onSelectPath={(path) => {
-              setSelectedPath(path);
-              nextStep();
-            }} />
+            <WelcomeScreen
+              onContinue={(data) => {
+                setSelectedPath(data); // e.g. { path: 'emotional' } or { path: 'lifeStage' }
+                nextStep();
+              }}
+              onCancel={() => {
+                // handle "Not Today, Take Me Back"
+                // e.g. navigate away or reset state
+              }}
+            />
           </StepLayout>
         );
+
       case 1:
         return (
           <StepLayout>
-            {selectedPath === 'lifeStage' && (
-              <LifeStageSelection setMemoryDraft={setMemoryDraft} onNext={nextStep} />
+            {path === 'lifeStage' && (
+              <LifeStageSelection
+                setMemoryDraft={setMemoryDraft}
+                onNext={nextStep}
+              />
             )}
-            {selectedPath === 'emotional' && (
-              <EmotionalCategorySelection setMemoryDraft={setMemoryDraft} onNext={nextStep} />
+            {path === 'emotional' && (
+              <EmotionalCategorySelection
+                category={category}
+                setMemoryDraft={setMemoryDraft}
+                onNext={nextStep}
+              />
             )}
           </StepLayout>
         );
+
       case 2:
         return (
           <StepLayout>
@@ -60,6 +87,7 @@ const GuidedMemoryChat = () => {
             />
           </StepLayout>
         );
+
       case 3:
         return (
           <StepLayout>
@@ -71,12 +99,14 @@ const GuidedMemoryChat = () => {
             />
           </StepLayout>
         );
+
       case 4:
         return (
           <StepLayout>
             <FinalConfirmation memoryDraft={memoryDraft} />
           </StepLayout>
         );
+
       default:
         return null;
     }
@@ -84,7 +114,6 @@ const GuidedMemoryChat = () => {
 
   return (
     <div className="relative w-full">
-      <CalmCorner />
       {renderStep()}
     </div>
   );

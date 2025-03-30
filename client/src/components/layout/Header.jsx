@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth } from "../firebase";
+import { auth } from "../../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { useUserData } from "../context/UserDataContext";
+import { useUserData } from "../../context/UserDataContext";
 
 const Header = () => {
   const navigate = useNavigate();
