@@ -7,7 +7,7 @@ import ReflectionStep from './ReflectionStep';
 import FinalConfirmation from './FinalConfirmation';
 import { useMemory } from '../../context/MemoryContext';
 import GuidedJourney from './GuidedJourney';
-import ChildhoodProfileBuilder from './Childhood/ChildhoodProfileBuilder'; // ✅ NEW
+import ChildhoodProfileBuilder from './Childhood/ChildhoodProfileBuilder';
 
 const affirmations = [
   "You are safe here.",
@@ -22,10 +22,11 @@ const MemoryPortalHome = () => {
   const [checkinDone, setCheckinDone] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
   const [currentAffirmationIndex, setCurrentAffirmationIndex] = useState(0);
-  const [selection, setSelection] = useState(null); // 'lifeStage' or 'emotional'
+  const [journeyType, setJourneyType] = useState(null);
+  const [selection, setSelection] = useState(null);
   const [selectedStage, setSelectedStage] = useState(null);
   const [journeyComplete, setJourneyComplete] = useState(false);
-  const [profileData, setProfileData] = useState(null); // ✅ stores GuidedJourney responses
+  const [profileData, setProfileData] = useState(null);
 
   const { currentStep, setCurrentStep } = useMemory();
 
@@ -37,7 +38,6 @@ const MemoryPortalHome = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Advance to memory entry after guided journey
   useEffect(() => {
     if (journeyComplete) {
       setCurrentStep(2);
@@ -46,12 +46,10 @@ const MemoryPortalHome = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-cover bg-center px-4">
-      {/* Floating Affirmation */}
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-white text-xl md:text-2xl font-medium z-20 animate-fade float-slow pointer-events-none select-none">
         {affirmations[currentAffirmationIndex]}
       </div>
 
-      {/* Main Card */}
       <div
         className={`w-full max-w-5xl h-fit bg-white/90 rounded-2xl shadow-xl p-10 md:p-16 backdrop-blur-md transition-opacity duration-1000 z-10 ${
           fadeIn ? 'opacity-100' : 'opacity-0'
@@ -64,73 +62,88 @@ const MemoryPortalHome = () => {
           This space is safe, calming, and here to help you piece together your personal life story.
         </p>
 
-        {/* Step 0: Daily Check-In */}
         {!checkinDone ? (
           <DailyCheckin onComplete={() => setCheckinDone(true)} />
         ) : (
           <>
-            {/* Step 1: Choose how to begin */}
             {currentStep === 0 && (
               <div className="mt-6 text-center">
                 <h2 className="text-xl md:text-2xl text-rose-700 mb-6">
-                  How would you like to start your memory journey today?
+                  How would you like to begin your memory journey today?
                 </h2>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button
                     onClick={() => {
-                      setSelection('lifeStage');
+                      setJourneyType('freeform');
                       setCurrentStep(1);
                     }}
-                    className="bg-rose-500 text-white px-5 py-3 rounded shadow hover:bg-rose-600 transition"
+                    className="bg-rose-500 text-white px-5 py-3 rounded shadow hover:bg-rose-600 transition w-full sm:w-64"
                   >
-                    By Life Stage
+                    ✨ Freeform Journey
                   </button>
                   <button
                     onClick={() => {
-                      setSelection('emotional');
+                      setJourneyType('guided');
                       setCurrentStep(1);
                     }}
-                    className="bg-rose-500 text-white px-5 py-3 rounded shadow hover:bg-rose-600 transition"
+                    className="bg-rose-500 text-white px-5 py-3 rounded shadow hover:bg-rose-600 transition w-full sm:w-64"
                   >
-                    By Emotional Category
+                    🔍 Guided Prompts
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Step 2: Life Stage Selection */}
-            {currentStep === 1 && selection === 'lifeStage' && !selectedStage && (
-              <LifeStageSelection setSelectedStage={setSelectedStage} />
+            {currentStep === 1 && journeyType === 'guided' && (
+              !selection ? (
+                <div className="text-center mt-8">
+                  <h2 className="text-lg md:text-xl text-rose-700 mb-4">
+                    Choose your guided path:
+                  </h2>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                      onClick={() => setSelection('lifeStage')}
+                      className="bg-rose-400 text-white px-4 py-2 rounded shadow hover:bg-rose-500 transition"
+                    >
+                      By Life Stage
+                    </button>
+                    <button
+                      onClick={() => setSelection('emotional')}
+                      className="bg-rose-400 text-white px-4 py-2 rounded shadow hover:bg-rose-500 transition"
+                    >
+                      By Emotional Category
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {selection === 'lifeStage' && !selectedStage && (
+                    <LifeStageSelection setSelectedStage={setSelectedStage} />
+                  )}
+                  {selection === 'lifeStage' && selectedStage && (
+                    <GuidedJourney
+                      stage={selectedStage}
+                      onComplete={(responses) => {
+                        setProfileData(responses);
+                        setJourneyComplete(true);
+                      }}
+                    />
+                  )}
+                  {selection === 'emotional' && <EmotionalCategorySelection />}
+                </>
+              )
             )}
 
-            {/* Step 2B: Guided Journey by Stage */}
-            {currentStep === 1 && selection === 'lifeStage' && selectedStage && (
-              <GuidedJourney
-                stage={selectedStage}
-                onComplete={(responses) => {
-                  setProfileData(responses);        // ✅ Save journey responses
-                  setJourneyComplete(true);         // ✅ Move to next step
-                }}
-              />
-            )}
+            {currentStep === 1 && journeyType === 'freeform' && <MemoryEntry />}
 
-            {/* Step 2: Emotional Category path */}
-            {currentStep === 1 && selection === 'emotional' && (
-              <EmotionalCategorySelection />
-            )}
-
-            {/* Step 3: Show profile summary after Guided Journey */}
             {currentStep === 2 && profileData && (
               <ChildhoodProfileBuilder responses={profileData} />
             )}
 
-            {/* Step 4: Memory Entry */}
             {currentStep === 2 && !profileData && <MemoryEntry />}
 
-            {/* Step 5: Reflection */}
             {currentStep === 3 && <ReflectionStep />}
 
-            {/* Step 6: Final Confirmation */}
             {currentStep === 4 && <FinalConfirmation />}
           </>
         )}

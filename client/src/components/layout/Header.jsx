@@ -52,7 +52,10 @@ const Header = () => {
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
             <img
-              src={userData?.avatar || "https://www.gravatar.com/avatar/?d=mp&f=y"}
+              src={
+                userData?.avatar ||
+                "https://www.gravatar.com/avatar/?d=mp&f=y"
+              }
               alt="avatar"
               className="w-8 h-8 rounded-full border-2 border-rose-400 shadow"
             />
@@ -82,13 +85,26 @@ const Header = () => {
                 My Memory Center
               </Link>
               <Link
+                to="/journey"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-rose-50"
+                onClick={() => setDropdownOpen(false)}
+              >
+                My Journey
+              </Link>
+              <Link
                 to="/guided-portal"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-rose-50"
                 onClick={() => setDropdownOpen(false)}
               >
                 Guided Portal
               </Link>
-
+              <Link
+                to="/settings"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-rose-50"
+                onClick={() => setDropdownOpen(false)}
+              >
+                Settings
+              </Link>
               <button
                 onClick={handleLogout}
                 className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-rose-50"

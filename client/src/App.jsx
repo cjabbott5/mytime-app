@@ -9,6 +9,10 @@ import Profile from './pages/Profile';
 import Onboarding from './pages/Onboarding';
 import MyMemoryCenter from './pages/MyMemoryCenter';
 import MyTimeline from './pages/MyTimeline';
+import ClientSettings from './pages/ClientSettings';
+import GroundMePage from './pages/GroundMePage';
+import MemoryJourneyPage from './pages/MemoryJourneyPage';
+import ChapterPromptsPage from './pages/ChapterPromptsPage'; // <- ✅ Make sure this has a default export
 
 // Context Providers
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -18,11 +22,6 @@ import { MemoryProvider } from './context/MemoryContext';
 // Components
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/layout/ProtectedRoute';
-import GroundMe from './components/GroundMe/GroundMe';
-import MemoryCenter from './components/MemoryPortal/MemoryCenter';
-
-// ✅ NEW: The working Guided Memory Flow
-import GuidedMemoryChat from './components/MemoryPortal/GuidedMemoryChat';
 
 const AppRoutes = () => {
   const { user, authLoading } = useAuth();
@@ -38,27 +37,16 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route
-        path="/"
-        element={user ? <Navigate to="/profile" replace /> : <Landing />}
-      />
-      <Route
-        path="/login"
-        element={user ? <Navigate to="/profile" replace /> : <Login />}
-      />
-      <Route
-        path="/register"
-        element={user ? <Navigate to="/profile" replace /> : <Register />}
-      />
+      <Route path="/" element={user ? <Navigate to="/profile" replace /> : <Landing />} />
+      <Route path="/login" element={user ? <Navigate to="/profile" replace /> : <Login />} />
+      <Route path="/register" element={user ? <Navigate to="/profile" replace /> : <Register />} />
 
       {/* Protected Routes */}
       <Route
         path="/profile"
         element={
           <ProtectedRoute>
-            <Layout>
-              <Profile />
-            </Layout>
+            <Layout><Profile /></Layout>
           </ProtectedRoute>
         }
       />
@@ -66,9 +54,7 @@ const AppRoutes = () => {
         path="/onboarding"
         element={
           <ProtectedRoute>
-            <Layout>
-              <Onboarding />
-            </Layout>
+            <Layout><Onboarding /></Layout>
           </ProtectedRoute>
         }
       />
@@ -76,9 +62,7 @@ const AppRoutes = () => {
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <Layout>
-              <MyMemoryCenter />
-            </Layout>
+            <Layout><MyMemoryCenter /></Layout>
           </ProtectedRoute>
         }
       />
@@ -86,19 +70,23 @@ const AppRoutes = () => {
         path="/timeline"
         element={
           <ProtectedRoute>
-            <Layout>
-              <MyTimeline />
-            </Layout>
+            <Layout><MyTimeline /></Layout>
           </ProtectedRoute>
         }
       />
       <Route
-        path="/guided-portal"
+        path="/journey"
         element={
           <ProtectedRoute>
-            <Layout>
-              <GuidedMemoryChat />
-            </Layout>
+            <Layout><MemoryJourneyPage /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/chapter/:chapterId"
+        element={
+          <ProtectedRoute>
+            <Layout><ChapterPromptsPage /></Layout>
           </ProtectedRoute>
         }
       />
@@ -106,19 +94,15 @@ const AppRoutes = () => {
         path="/ground-me"
         element={
           <ProtectedRoute>
-            <Layout>
-              <GroundMe />
-            </Layout>
+            <Layout><GroundMePage /></Layout>
           </ProtectedRoute>
         }
       />
       <Route
-        path="/memory-center"
+        path="/settings"
         element={
           <ProtectedRoute>
-            <Layout>
-              <MemoryCenter />
-            </Layout>
+            <Layout><ClientSettings /></Layout>
           </ProtectedRoute>
         }
       />
