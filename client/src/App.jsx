@@ -10,6 +10,11 @@ import GuidedPortalPage from './pages/GuidedPortalPage';
 import Onboarding from './pages/Onboarding';
 import MyMemoryCenter from './pages/MyMemoryCenter';
 import MyTimeline from './pages/MyTimeline';
+import ClientSettings from './pages/ClientSettings';
+import GroundMePage from './pages/GroundMePage';
+import MemoryJourneyPage from './pages/MemoryJourneyPage';
+import ChapterPromptsPage from './pages/ChapterPromptsPage';
+import SafeMomentsPage from './pages/chapter/SafeMomentsPage';
 
 // Context Providers
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -92,9 +97,39 @@ const AppRoutes = () => {
         path="/guided-portal"
         element={
           <ProtectedRoute>
-            <Layout>
-              <GuidedPortalPage />
-            </Layout>
+            <Layout><MemoryJourneyPage /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/chapter/:chapterId"
+        element={
+          <ProtectedRoute>
+            <Layout><ChapterPromptsPage /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/chapter/safeMoments"
+        element={
+          <ProtectedRoute>
+            <Layout><SafeMomentsPage /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ground-me"
+        element={
+          <ProtectedRoute>
+            <Layout><GroundMePage /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Layout><ClientSettings /></Layout>
           </ProtectedRoute>
         }
       />
