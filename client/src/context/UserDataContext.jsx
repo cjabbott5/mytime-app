@@ -1,82 +1,85 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth, db } from '../firebase';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { checkAuthState, getUserData } from '@/config/firebase';
 
-// Export the hook FIRST
-export const useUserData = () => useContext(UserDataContext);
-
-// Create the context
 const UserDataContext = createContext();
 
-// Provider component
 export const UserDataProvider = ({ children }) => {
   const [userData, setUserData] = useState({});
-  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Load user data from Firestore
-  const loadUserData = async (uid) => {
-    const docRef = doc(db, 'users', uid);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      setUserData(docSnap.data());
-    } else {
-      const initialData = {
-        name: '',
-        pronouns: '',
-        age: '',
-        genderIdentity: '',
-        culturalIdentity: '',
-        spirituality: '',
-        livingSituation: '',
-        mentalHealth: '',
-        copingTools: [],
-        traits: [],
-        moods: [],
-        avatar: '',
-        goals: [],
-        frustrations: [],
-        emotionalDepth: '',
-        promptFrequency: '',
-        timeOfDay: '',
-        languageTone: '',
-      };
-
-      await setDoc(docRef, initialData);
-      setUserData(initialData);
-    }
+  const updateUserData = (newData) => {
+    setUserData((prev) => ({
+      ...prev,
+      ...newData,
+    }));
   };
 
-  // Update Firestore and local state with the new user data
-  const updateUserData = async (updatedFields) => {
-    if (!currentUser) return;
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // 🔁 1. Try localStorage first
+        const savedData = localStorage.getItem('onboardingData');
+        if (savedData) {
+          setUserData(JSON.parse(savedData));
+          setLoading(false);
+          return;
+        }
 
-    const docRef = doc(db, 'users', currentUser.uid);
-    const newUserData = {
-      ...userData,
-      ...updatedFields,
+        // 🔁 2. If no local data, fetch from Firebase
+        const user = await checkAuthState();
+        const firebaseData = await getUserData(user.uid);
+
+        if (firebaseData) {
+          setUserData(firebaseData);
+        } else {
+          // ✅ Fallback if no Firebase data
+          setUserData({
+            name: 'Taylor Moon',
+            pronouns: 'she/they',
+            genderIdentity: ['Nonbinary'],
+            culturalIdentity: ['Latina'],
+            spirituality: ['Spiritual but not religious'],
+            mentalHealth: ['Anxiety', 'PTSD'],
+            copingTools: ['Music', 'Exercise / Movement', 'Therapist'],
+            avatar: '',
+            goals: ['Feel grounded', 'Remember who I am', 'Rebuild routines'],
+            frustrations: ['Sleep inconsistency', 'Emotional overwhelm'],
+            moods: ['Calm', 'Hopeful'],
+            supportSystem: ['Friends', 'Therapist', 'Pet / animal'],
+            currentReflection: 'I am still figuring things out — and that’s okay.',
+            personalitySpectrum: {
+              introvertExtrovert: 40,
+              analyticalCreative: 75,
+              loyalFickle: 90,
+              passiveActive: 60,
+              structuredFlexible: 55,
+              groundedDreamy: 70,
+            },
+            moodLog: [],
+          });
+        }
+      } catch (error) {
+        console.warn("⚠️ Failed to fetch user data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    await setDoc(docRef, newUserData);
-    setUserData(newUserData);
-  };
-
-  // Auth state listener
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      if (user) {
-        loadUserData(user.uid);
-      }
-    });
-
-    return () => unsubscribe();
+    fetchUserData();
   }, []);
+
+  // 💾 Auto-save userData to localStorage
+  useEffect(() => {
+    if (!loading) {
+      localStorage.setItem('onboardingData', JSON.stringify(userData));
+    }
+  }, [userData, loading]);
 
   return (
     <UserDataContext.Provider value={{ userData, updateUserData }}>
-      {children}
+      {!loading && children}
     </UserDataContext.Provider>
   );
 };
+
+export const useUserData = () => useContext(UserDataContext);

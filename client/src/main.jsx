@@ -1,15 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import './index.css';
 
-// 🧠 Context Providers
-import { MemoryProvider } from './context/MemoryContext';
+import { UserDataProvider } from '@/context/UserDataContext';
+import { MemoryProvider } from '@/context/MemoryContext'; // ✅ Add this
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <MemoryProvider>
-      <App />
-    </MemoryProvider>
-  </React.StrictMode>
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <BrowserRouter>
+      <UserDataProvider>
+        <MemoryProvider> {/* ✅ Wrap App with MemoryProvider */}
+          <App />
+        </MemoryProvider>
+      </UserDataProvider>
+    </BrowserRouter>
+  </StrictMode>
 );

@@ -1,4 +1,22 @@
-# Logs
+# ─────────────────────────────
+# 🔧 BUILD + DEP STUFF
+node_modules/
+dist/
+build/
+dist-ssr/
+*.local
+.env
+.env.*.local
+
+# ─────────────────────────────
+# 🔒 FIREBASE / SECRETS
+firebase-debug.log
+firebase.json
+firestore.indexes.json
+firestore.rules
+
+# ─────────────────────────────
+# 🧹 LOG FILES
 logs
 *.log
 npm-debug.log*
@@ -7,15 +25,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
+# ─────────────────────────────
+# ⚙️ OS / EDITORS
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*

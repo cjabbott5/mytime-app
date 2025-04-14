@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Golden Retriever Animation */
+@keyframes float-down {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(200px) scale(1.5);
+      opacity: 0;
+    }
+  }
+  
+  .animate-float-down {
+    animation: float-down 2.5s ease-in forwards;
+  }
+  
+  

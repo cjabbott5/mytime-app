@@ -1,113 +1,48 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  getDocs,
-} from 'firebase/firestore';
-import { db } from '../firebase';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// 🧠 Create the context
 const MemoryContext = createContext();
 
-// 🧠 Provider Component
-const MemoryProvider = ({ children }) => {
+export const useMemory = () => useContext(MemoryContext);
+
+export const MemoryProvider = ({ children }) => {
   const [memories, setMemories] = useState([]);
-  const [currentStep, setCurrentStep] = useState(0);
 
-  // 🔄 Fetch memories on mount
+  // Load from localStorage on first render
   useEffect(() => {
-    const fetchMemories = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'memories'));
-        const memoryList = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setMemories(memoryList);
-      } catch (error) {
-        console.error('[🔥 Firestore] Failed to fetch memories:', error);
-      }
-    };
-
-    fetchMemories();
+    const stored = localStorage.getItem('mytime_memories');
+    if (stored) {
+      setMemories(JSON.parse(stored));
+    }
   }, []);
 
-  // ➕ Add
-  const addMemory = async (memory) => {
-    try {
-      const docRef = await addDoc(collection(db, 'memories'), memory);
-      setMemories((prev) => [{ id: docRef.id, ...memory }, ...prev]);
-    } catch (error) {
-      console.error('[🔥 Firestore] Failed to add memory:', error);
-    }
+  // Save to localStorage whenever memories change
+  useEffect(() => {
+    localStorage.setItem('mytime_memories', JSON.stringify(memories));
+  }, [memories]);
+
+  const addMemory = (newMemory) => {
+    const memoryWithId = {
+      ...newMemory,
+      id: Date.now().toString() // simple unique ID for now
+    };
+    setMemories((prev) => [memoryWithId, ...prev]);
   };
 
-  // 🛠️ Update
-  const updateMemory = async (id, updatedData) => {
-    try {
-      const memoryRef = doc(db, 'memories', id);
-      await updateDoc(memoryRef, updatedData);
-      setMemories((prev) =>
-        prev.map((m) => (m.id === id ? { ...m, ...updatedData } : m))
-      );
-    } catch (error) {
-      console.error('[🔥 Firestore] Failed to update memory:', error);
-    }
+  const deleteMemory = (id) => {
+    setMemories((prev) => prev.filter((m) => m.id !== id));
   };
 
-  // ❌ Delete
-  const deleteMemory = async (id) => {
-    try {
-      await deleteDoc(doc(db, 'memories', id));
-      setMemories((prev) => prev.filter((m) => m.id !== id));
-    } catch (error) {
-      console.error('[🔥 Firestore] Failed to delete memory:', error);
-    }
-  };
-
-  // 🔍 Search
-  const searchMemories = ({ title = '', tags = [], mood = '', dateRange = null }) => {
-    return memories.filter((m) => {
-      const matchTitle = m.title?.toLowerCase().includes(title.toLowerCase());
-      const matchMood = !mood || m.mood === mood;
-      const matchTags = tags.length === 0 || tags.every((t) => m.tags?.includes(t));
-      const matchDate =
-        !dateRange ||
-        (new Date(m.date) >= new Date(dateRange[0]) &&
-          new Date(m.date) <= new Date(dateRange[1]));
-
-      return matchTitle && matchMood && matchTags && matchDate;
-    });
+  const updateMemory = (updated) => {
+    setMemories((prev) =>
+      prev.map((m) => (m.id === updated.id ? updated : m))
+    );
   };
 
   return (
     <MemoryContext.Provider
-      value={{
-        memories,
-        addMemory,
-        updateMemory,
-        deleteMemory,
-        searchMemories,
-        currentStep,
-        setCurrentStep,
-      }}
+      value={{ memories, addMemory, deleteMemory, updateMemory }}
     >
       {children}
     </MemoryContext.Provider>
   );
 };
-
-// 🧠 Hook to use memory context
-const useMemory = () => {
-  const context = useContext(MemoryContext);
-  if (!context) {
-    throw new Error('useMemory must be used within a MemoryProvider');
-  }
-  return context;
-};
-
-// 🔓 Exports
-export { MemoryProvider, useMemory };

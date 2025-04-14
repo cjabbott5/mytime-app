@@ -1,127 +1,154 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import LayoutWrapper from "./components/layout/LayoutWrapper";
 
-// Pages
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Profile from './pages/Profile';
-import Onboarding from './pages/Onboarding';
-import MyMemoryCenter from './pages/MyMemoryCenter';
-import MyTimeline from './pages/MyTimeline';
-import ClientSettings from './pages/ClientSettings';
-import GroundMePage from './pages/GroundMePage';
-import MemoryJourneyPage from './pages/MemoryJourneyPage';
-import ChapterPromptsPage from './pages/ChapterPromptsPage'; // <- ✅ Make sure this has a default export
+// 🔹 Auth Pages
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
 
-// Context Providers
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { UserDataProvider } from './context/UserDataContext';
-import { MemoryProvider } from './context/MemoryContext';
+// 🔹 Public Pages
+import HeroSection from './pages/Home/HeroSection';
+import AboutJourney from './pages/Home/AboutJourney';
 
-// Components
-import Layout from './components/layout/Layout';
-import ProtectedRoute from './components/layout/ProtectedRoute';
+// 🔹 Top-Level Protected Pages
+import Dashboard from './pages/Dashboard';
+import WhoIAm from './pages/WhoIAm';
+import WhereImGoing from './pages/WhereImGoing';
+import Settings from './pages/Settings';
 
-const AppRoutes = () => {
-  const { user, authLoading } = useAuth();
+// 🔸 Sub-Pages (Protected)
+import Profile from './pages/WhoIAm/Profile';
+import IdentityPrompt from './pages/WhoIAm/IdentityPrompt';
+import Onboarding from './pages/WhoIAm/Onboarding';
+import DreamPrompt from './pages/WhereImGoing/DreamPrompt';
+import GoalVisionBoard from './pages/WhereImGoing/GoalVisionBoard';
 
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-rose-500 text-lg font-semibold">
-        Loading...
-      </div>
-    );
-  }
+// 🧠 ROUTE GROUPS
+import { whereIveBeenRoutes } from './pages/WhereIveBeen/routes.jsx';
 
+export default function App() {
   return (
     <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={user ? <Navigate to="/profile" replace /> : <Landing />} />
-      <Route path="/login" element={user ? <Navigate to="/profile" replace /> : <Login />} />
-      <Route path="/register" element={user ? <Navigate to="/profile" replace /> : <Register />} />
+      {/* 🏠 Public Landing Page */}
+      <Route
+        path="/"
+        element={
+          <LayoutWrapper>
+            <HeroSection />
+          </LayoutWrapper>
+        }
+      />
+      <Route
+        path="/about"
+        element={
+          <LayoutWrapper>
+            <AboutJourney />
+          </LayoutWrapper>
+        }
+      />
 
-      {/* Protected Routes */}
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <Layout><Profile /></Layout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/onboarding"
-        element={
-          <ProtectedRoute>
-            <Layout><Onboarding /></Layout>
-          </ProtectedRoute>
-        }
-      />
+      {/* 🔐 Auth Pages */}
+      <Route path="/auth/login" element={<Login />} />
+      <Route path="/auth/register" element={<Register />} />
+
+      {/* 🔐 Protected Routes */}
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <Layout><MyMemoryCenter /></Layout>
+            <LayoutWrapper>
+              <Dashboard />
+            </LayoutWrapper>
           </ProtectedRoute>
         }
       />
       <Route
-        path="/timeline"
+        path="/who-i-am"
         element={
           <ProtectedRoute>
-            <Layout><MyTimeline /></Layout>
+            <LayoutWrapper>
+              <WhoIAm />
+            </LayoutWrapper>
           </ProtectedRoute>
         }
       />
       <Route
-        path="/journey"
+        path="/who-i-am/onboarding"
         element={
           <ProtectedRoute>
-            <Layout><MemoryJourneyPage /></Layout>
+            <LayoutWrapper>
+              <Onboarding />
+            </LayoutWrapper>
           </ProtectedRoute>
         }
       />
       <Route
-        path="/chapter/:chapterId"
+        path="/who-i-am/profile"
         element={
           <ProtectedRoute>
-            <Layout><ChapterPromptsPage /></Layout>
+            <LayoutWrapper>
+              <Profile />
+            </LayoutWrapper>
           </ProtectedRoute>
         }
       />
       <Route
-        path="/ground-me"
+        path="/who-i-am/identity"
         element={
           <ProtectedRoute>
-            <Layout><GroundMePage /></Layout>
+            <LayoutWrapper>
+              <IdentityPrompt />
+            </LayoutWrapper>
           </ProtectedRoute>
         }
       />
+
+      {/* 🌸 WHERE I'VE BEEN ROUTES */}
+      {whereIveBeenRoutes}
+
+      {/* 🚀 WHERE I'M GOING */}
+      <Route
+        path="/where-im-going"
+        element={
+          <ProtectedRoute>
+            <LayoutWrapper>
+              <WhereImGoing />
+            </LayoutWrapper>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/where-im-going/dream-prompt"
+        element={
+          <ProtectedRoute>
+            <LayoutWrapper>
+              <DreamPrompt />
+            </LayoutWrapper>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/where-im-going/goal-vision-board"
+        element={
+          <ProtectedRoute>
+            <LayoutWrapper>
+              <GoalVisionBoard />
+            </LayoutWrapper>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* 🛠 SETTINGS */}
       <Route
         path="/settings"
         element={
           <ProtectedRoute>
-            <Layout><ClientSettings /></Layout>
+            <LayoutWrapper>
+              <Settings />
+            </LayoutWrapper>
           </ProtectedRoute>
         }
       />
     </Routes>
   );
-};
-
-const App = () => {
-  return (
-    <Router>
-      <AuthProvider>
-        <UserDataProvider>
-          <MemoryProvider>
-            <AppRoutes />
-          </MemoryProvider>
-        </UserDataProvider>
-      </AuthProvider>
-    </Router>
-  );
-};
-
-export default App;
+}
