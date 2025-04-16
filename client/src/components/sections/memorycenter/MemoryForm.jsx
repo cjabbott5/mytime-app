@@ -221,20 +221,20 @@ const MemoryForm = ({ memoryToEdit = null, onClose }) => {
         </button>
 
         <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setShowPreview(true)}
-            className="px-4 py-2 bg-pink-200 text-pink-800 rounded-md text-sm hover:bg-pink-300"
-          >
-            Preview Memory
-          </button>
-          <button
-            type="submit"
-            className="bg-rose-500 text-white px-4 py-2 rounded-md hover:bg-rose-600 text-sm"
-          >
-            {memoryToEdit ? "Update" : "Add"}
-          </button>
-        </div>
+  <button
+    type="button"
+    onClick={() => setShowPreview(true)}
+    className="px-4 py-2 bg-cloud.mist text-cloud.shadow rounded-md text-sm hover:bg-cloud.serene"
+  >
+    Preview Memory
+  </button>
+  <button
+    type="submit"
+    className="bg-loop.accent text-white px-4 py-2 rounded-md hover:bg-cloud.shadow text-sm"
+  >
+    {memoryToEdit ? "Update" : "Add"}
+  </button>
+</div>
       </div>
 
       {showPreview && (

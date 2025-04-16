@@ -9,27 +9,34 @@ export default {
   theme: {
     extend: {
       colors: {
-        // 🎨 Your existing colors
-        primary: '#fe7191',
-        secondary: '#f2b4c8',
+        // 🎨 Main Loop Theme
+        loop: {
+          primary: '#84BFF7',     // Light sky blue
+          secondary: '#D6E9FF',   // Soft cloud blue
+          accent: '#3C7DC4',      // Stronger blue
+          highlight: '#EAF6FF',   // Pale highlight
+          dark: '#1C3F66',        // Deep contrast text
+          neutral: '#F8FBFF',     // Very pale blue-white
+        },
+        'loop-primary': '#1C3F66', // alias of loop.dark
 
-        // 🌈 Theme color palette (used for user settings)
-        theme: {
-          purple: '#7c3aed',
-          blue: '#2563eb',
-          yellow: '#facc15',
-          green: '#10b981',
-          mauve: {
-            100: "#f3e8ee",
-            500: "#b185a7",
-            700: "#6d3d7a",
-          },
-          
+        // ☁️ Loop Blue Palette (cloud-inspired)
+        cloud: {
+          frost: '#EAF6FF',
+          mist: '#CDE6F9',
+          serene: '#A3D3F3',
+          azure: '#73BCE8',
+          depth: '#4FA3D8',
+          shadow: '#347FB4',
         },
       },
+
+      // 🖋️ Fonts
       fontFamily: {
         sans: ['"Inter"', ...defaultTheme.fontFamily.sans],
       },
+
+      // 🌀 Custom Animations
       keyframes: {
         floatDown: {
           '0%': { transform: 'translateY(0)', opacity: '1' },

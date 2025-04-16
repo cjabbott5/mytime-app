@@ -28,11 +28,11 @@ const SleepEditor = () => {
         className="border rounded px-2 py-1"
       />
       <button
-        onClick={handleSave}
-        className="bg-pink-500 text-white rounded px-3 py-1 hover:bg-pink-600"
-      >
-        Save
-      </button>
+  onClick={handleSave}
+  className="bg-[theme(colors.loop.accent)] text-white rounded px-3 py-1 hover:bg-[theme(colors.loop.dark)] transition duration-200 ease-in-out"
+>
+  Save
+</button>
     </div>
   );
 };

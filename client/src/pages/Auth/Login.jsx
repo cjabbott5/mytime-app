@@ -5,7 +5,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from 'firebase/auth';
-import { auth } from '../../config/firebase'; 
+import { auth } from '../../config/firebase';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/'); // redirects to your HeroSection
+      navigate('/');
     } catch (err) {
       console.error('❌ Email login error:', err.code, err.message);
       switch (err.code) {
@@ -39,7 +39,7 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     try {
       await signInWithPopup(auth, provider);
-      navigate('/dashboard'); // Change to your app's redirect path
+      navigate('/dashboard');
     } catch (err) {
       console.error('❌ Google Sign-In error:', err.message);
       alert('Google login failed.');
@@ -50,18 +50,18 @@ const Login = () => {
     <div
       className="min-h-screen flex items-center justify-center p-6 bg-cover"
       style={{
-        backgroundImage: `url('/client/src/assets/PinkCity.jpg')`, // Update the path if needed
-      }}
+        backgroundImage: `url('/src/assets/cloud-bg.jpg')`,
+      }}      
     >
-      <div className="bg-white p-8 rounded-xl shadow-md max-w-md w-full text-center">
-        <h2 className="text-2xl font-semibold text-rose-600 mb-4">Log In</h2>
+      <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full text-center">
+        <h2 className="text-3xl font-bold text-loop-primary mb-6">Welcome Back</h2>
 
         {/* Email/Password Form */}
         <form onSubmit={handleEmailLogin} className="space-y-4">
           <input
             type="email"
             placeholder="Email"
-            className="w-full px-4 py-2 border rounded-md"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-loop-primary"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -69,14 +69,14 @@ const Login = () => {
           <input
             type="password"
             placeholder="Password"
-            className="w-full px-4 py-2 border rounded-md"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-loop-primary"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
           <button
             type="submit"
-            className="bg-rose-500 hover:bg-rose-600 text-white font-semibold w-full py-2 rounded-md"
+            className="bg-loop-primary hover:bg-loop-dark text-white font-bold w-full py-3 rounded-lg transition shadow-md hover:shadow-lg"
           >
             Log In
           </button>
@@ -95,7 +95,7 @@ const Login = () => {
         {/* Google Login */}
         <button
           onClick={handleGoogleLogin}
-          className="bg-white border border-gray-300 text-gray-800 font-medium w-full py-2 rounded-md shadow-sm hover:bg-gray-100 flex items-center justify-center gap-2"
+          className="bg-white border border-gray-300 text-gray-800 font-medium w-full py-3 rounded-lg shadow-sm hover:bg-gray-100 flex items-center justify-center gap-2"
         >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -107,7 +107,7 @@ const Login = () => {
 
         <p className="text-sm mt-6">
           Don’t have an account?{' '}
-          <Link to="/auth/register" className="text-rose-600 underline">
+          <Link to="/auth/register" className="text-loop-primary font-semibold underline">
             Create one
           </Link>
         </p>

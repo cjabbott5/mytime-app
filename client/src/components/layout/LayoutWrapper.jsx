@@ -8,7 +8,7 @@ export default function LayoutWrapper({ children }) {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f2b4c8] to-[#fe7191] relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-loop-highlight to-loop-accent relative overflow-hidden">
       {/* Show header and golden retriever on all pages except landing */}
       {!isLandingPage && (
         <>

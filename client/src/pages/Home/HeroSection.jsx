@@ -1,38 +1,42 @@
 import { Link } from 'react-router-dom';
+import loopLogo from '@/assets/loop-logo.png'; // ⬅️ make sure this is in your assets!
 
 export default function HeroSection() {
   return (
     <div
-      className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center text-white text-center px-4"
-      style={{ backgroundImage: "url('/src/assets/PinkCity.jpg')" }}
+      className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4 text-center relative"
+      style={{ backgroundImage: "url('/src/assets/wallpaper.jpg')" }}
     >
       {/* Top CTA */}
       <div className="absolute top-10">
-        <Link to="/about"> {/* 🔁 UPDATED path */}
-          <button className="bg-white bg-opacity-80 text-primary font-bold px-6 py-3 rounded-full shadow-lg hover:bg-opacity-100 transition">
+        <Link to="/about">
+          <button className="bg-white bg-opacity-90 text-loop-primary font-bold px-6 py-3 rounded-full shadow-lg hover:bg-opacity-100 transition">
             LEARN ABOUT THE JOURNEY
           </button>
         </Link>
       </div>
 
-      {/* Hero Content */}
-      <h1 className="text-[10vw] font-extrabold text-primary drop-shadow-[0_2px_4px_rgba(255,255,255,0.8)] tracking-wider">
-        MY TIME
-      </h1>
+      {/* 🌌 Massive Loop Logo */}
+      <img
+        src={loopLogo}
+        alt="Loop Logo"
+        className="w-[60vw] max-w-[420px] drop-shadow-xl mb-4"
+      />
 
-      <p className="text-2xl text-white drop-shadow-2xl mt-1">
+      {/* ✨ Tagline */}
+      <p className="text-2xl sm:text-3xl font-bold text-loop-primary drop-shadow-md">
         Reclaim Your Story.
       </p>
 
       {/* Auth Buttons */}
       <div className="flex flex-col md:flex-row gap-6 mt-12">
         <Link to="/auth/login">
-          <button className="bg-white text-primary font-bold px-8 py-4 rounded-full transition hover:bg-primary hover:text-white shadow-md hover:shadow-lg">
+          <button className="bg-loop-primary text-white font-bold px-8 py-4 rounded-full transition hover:bg-white hover:text-loop-primary shadow-md hover:shadow-lg">
             LOG IN
           </button>
         </Link>
         <Link to="/auth/register">
-          <button className="bg-white text-primary font-bold px-8 py-4 rounded-full transition hover:bg-primary hover:text-white shadow-md hover:shadow-lg">
+          <button className="bg-loop-primary text-white font-bold px-8 py-4 rounded-full transition hover:bg-white hover:text-loop-primary shadow-md hover:shadow-lg">
             SIGN UP
           </button>
         </Link>

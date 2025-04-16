@@ -4,7 +4,7 @@
 
 /* Default global styling */
 body {
-  @apply font-sans bg-white text-[#222];
+  @apply font-sans bg-loop-neutral text-loop-dark;
 }
 
 /* Optional utility class: white text stroke */

@@ -15,7 +15,6 @@ export default function OnboardingStep({
 
   const getMappedKey = (id) => onboardingFieldMap[id] || id;
 
-  // 🧠 Hydrate localValues when step or formData changes
   useEffect(() => {
     if (!step || (!step.fields && step.type !== 'sliderGroup')) return;
 
@@ -33,7 +32,6 @@ export default function OnboardingStep({
       });
     }
 
-    console.log('[💧 Hydrated values]', initialValues);
     setLocalValues(initialValues);
   }, [step.id, formData]);
 
@@ -66,12 +64,7 @@ export default function OnboardingStep({
       return acc;
     }, {});
 
-    console.log('[🚀 Submitting step data]', step.id, flatData);
-
-    if (Object.keys(flatData).length === 0) {
-      console.warn('⚠️ Skipping submission: empty step data');
-      return;
-    }
+    if (Object.keys(flatData).length === 0) return;
 
     try {
       const user = await checkAuthState();
@@ -82,7 +75,7 @@ export default function OnboardingStep({
       console.error('Error saving data:', error);
     }
 
-    onNext(flatData); // flatData will never be undefined now
+    onNext(flatData);
   };
 
   const renderField = (field) => {
@@ -96,7 +89,7 @@ export default function OnboardingStep({
             type={field.type}
             value={value || ''}
             onChange={(e) => handleChange(field.id, e.target.value)}
-            className="w-full border rounded px-3 py-2 text-gray-800"
+            className="w-full border border-loop.accent rounded px-3 py-2 text-loop.dark bg-white shadow-sm"
             aria-label={field.label}
           />
         );
@@ -106,7 +99,7 @@ export default function OnboardingStep({
           <select
             value={value || ''}
             onChange={(e) => handleChange(field.id, e.target.value)}
-            className="w-full border rounded px-3 py-2 text-gray-800"
+            className="w-full border border-loop.accent rounded px-3 py-2 text-loop.dark bg-white shadow-sm"
             aria-label={field.label}
           >
             <option value="">Select</option>
@@ -126,10 +119,10 @@ export default function OnboardingStep({
                   key={idx}
                   type="button"
                   onClick={() => handleMultiToggle(field.id, opt)}
-                  className={`px-4 py-2 rounded border text-sm ${
+                  className={`px-4 py-2 rounded-full border text-sm font-medium transition-all shadow-sm ${
                     selected
-                      ? 'bg-rose-500 text-white border-rose-500'
-                      : 'border-rose-300 text-rose-600 hover:bg-rose-50'
+                      ? 'bg-loop.dark text-white border-loop.dark'
+                      : 'bg-loop.secondary text-loop.dark border-loop.accent hover:bg-loop.highlight'
                   }`}
                   aria-pressed={selected}
                 >
@@ -150,15 +143,15 @@ export default function OnboardingStep({
                   key={idx}
                   type="button"
                   onClick={() => handleChange(field.id, opt.value)}
-                  className={`rounded-lg border p-2 w-full flex flex-col items-center ${
+                  className={`rounded-lg border p-2 w-full flex flex-col items-center transition-all shadow-sm ${
                     selected
-                      ? 'border-rose-500 ring-2 ring-rose-500'
-                      : 'border-gray-300 hover:border-rose-400'
+                      ? 'border-loop.accent ring-2 ring-loop.accent'
+                      : 'border-gray-300 hover:border-loop.highlight'
                   }`}
                   aria-pressed={selected}
                 >
                   <img src={opt.image} alt={opt.label} className="w-20 h-20 object-contain mb-2" />
-                  <span className="text-sm">{opt.label}</span>
+                  <span className="text-sm text-loop.dark">{opt.label}</span>
                 </button>
               );
             })}
@@ -172,16 +165,16 @@ export default function OnboardingStep({
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-rose-600">{step.title}</h2>
+      <h2 className="text-2xl font-bold text-loop.dark">{step.title}</h2>
       {step.description && (
-        <p className="text-gray-600 whitespace-pre-line">{step.description}</p>
+        <p className="text-loop.accent whitespace-pre-line">{step.description}</p>
       )}
 
       {step.type === 'form' && (
         <div className="space-y-6">
           {step.fields.map((field) => (
             <div key={field.id}>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-loop.dark mb-1">
                 {field.label}
               </label>
               {renderField(field)}
@@ -194,7 +187,7 @@ export default function OnboardingStep({
         <div className="space-y-6">
           {step.fields.map((field) => (
             <div key={field.id}>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-loop.dark mb-1">
                 {field.label}
               </label>
               <input
@@ -203,13 +196,11 @@ export default function OnboardingStep({
                 max={100}
                 step={1}
                 value={localValues[field.id] ?? 50}
-                onChange={(e) =>
-                  handleChange(field.id, Number(e.target.value))
-                }
+                onChange={(e) => handleChange(field.id, Number(e.target.value))}
                 className="w-full"
                 aria-valuenow={localValues[field.id] ?? 50}
               />
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-loop.accent mt-1">
                 Strength: {localValues[field.id] ?? 50}%
               </div>
             </div>
@@ -218,30 +209,30 @@ export default function OnboardingStep({
       )}
 
       {/* Navigation */}
-{step.fields || step.type === 'sliderGroup' ? (
-  <div className="flex justify-between pt-6">
-    {!isFirst && (
-      <button onClick={onBack} className="text-sm text-rose-500 hover:underline">
-        ← Back
-      </button>
-    )}
-    <button
-      onClick={handleSubmit}
-      className="bg-rose-500 text-white px-6 py-2 rounded hover:bg-rose-600"
-    >
-      {isLast ? 'Review Summary' : 'Next'}
-    </button>
-  </div>
-) : (
-  <div className="flex justify-end pt-6">
-    <button
-      onClick={() => onNext({})}
-      className="bg-rose-500 text-white px-6 py-2 rounded hover:bg-rose-600"
-    >
-      {isLast ? 'Review Summary' : 'Next'}
-    </button>
-  </div>
-)}
+      {step.fields || step.type === 'sliderGroup' ? (
+        <div className="flex justify-between pt-6">
+          {!isFirst && (
+            <button onClick={onBack} className="text-sm text-loop.accent hover:underline">
+              ← Back
+            </button>
+          )}
+          <button
+            onClick={handleSubmit}
+            className="bg-loop.accent text-white px-6 py-2 rounded hover:bg-loop.dark"
+          >
+            {isLast ? 'Review Summary' : 'Next'}
+          </button>
+        </div>
+      ) : (
+        <div className="flex justify-end pt-6">
+          <button
+            onClick={() => onNext({})}
+            className="bg-loop.accent text-white px-6 py-2 rounded hover:bg-loop.dark"
+          >
+            {isLast ? 'Review Summary' : 'Next'}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

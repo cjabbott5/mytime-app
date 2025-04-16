@@ -77,22 +77,22 @@ export default function Profile() {
 
   const renderPillList = (title, values, sectionKey) => (
     <div className="bg-white/80 rounded-xl p-8 shadow relative">
-      <h3 className="text-3xl font-bold text-pink-700 mb-6">{title}</h3>
+      <h3 className="text-3xl font-bold text-loop-dark mb-6">{title}</h3>
       <button
         onClick={() => setEditModal({ title, sectionKey, initialValues: values })}
-        className="absolute top-6 right-6 text-pink-500 hover:text-pink-700 text-xl"
+        className="absolute top-6 right-6 text-loop-accent hover:text-cloud-shadow text-xl"
       >
         <FaEdit />
       </button>
       <div className="flex flex-wrap gap-4">
         {values.slice(0, 3).map((item, i) => (
-          <span key={i} className="bg-pink-100 text-pink-700 px-4 py-3 text-base rounded-2xl shadow flex flex-col items-center gap-1 w-28 h-28 text-center justify-center">
+          <span key={i} className="bg-cloud-serene text-loop-dark px-4 py-3 text-base rounded-2xl shadow flex flex-col items-center gap-1 w-28 h-28 text-center justify-center">
             <span className="text-3xl">{iconMap[item]}</span>
             <span className="text-base mt-1">{item}</span>
           </span>
         ))}
         {values.length > 3 && (
-          <span className="text-base text-pink-600">{`+${values.length - 3} more`}</span>
+          <span className="text-base text-loop-accent">{`+${values.length - 3} more`}</span>
         )}
       </div>
     </div>
@@ -107,7 +107,7 @@ export default function Profile() {
         {/* Sidebar */}
         <aside className="w-full md:w-[320px] bg-white/80 rounded-xl shadow-inner p-8 flex flex-col items-center text-center">
           <div className="relative mb-4 hover:scale-105 transition">
-            <div className="w-56 h-56 rounded-full overflow-hidden border-[6px] border-pink-600">
+            <div className="w-56 h-56 rounded-full overflow-hidden border-[6px] border-loop-accent">
               <img
                 src={avatar || 'https://www.gravatar.com/avatar/?d=mp&f=y'}
                 alt="Profile"
@@ -116,7 +116,7 @@ export default function Profile() {
             </div>
             <label
               className={`absolute bottom-2 right-2 text-white text-sm px-3 py-1 rounded cursor-pointer ${
-                uploading ? 'bg-gray-400' : 'bg-pink-600'
+                uploading ? 'bg-gray-400' : 'bg-loop-accent'
               }`}
             >
               {uploading ? 'Uploading…' : 'Edit'}
@@ -130,18 +130,18 @@ export default function Profile() {
             </label>
           </div>
 
-          <h2 className="text-2xl font-bold text-pink-700">{name || 'Your Name'}</h2>
-          <p className="text-lg text-gray-600">{pronouns || 'Your pronouns'}</p>
+          <h2 className="text-2xl font-bold text-loop-dark">{name || 'Your Name'}</h2>
+          <p className="text-lg text-cloud-shadow">{pronouns || 'Your pronouns'}</p>
 
           <textarea
-            className="mt-4 w-full text-base text-pink-700 bg-white rounded-md p-3 shadow resize-none"
+            className="mt-4 w-full text-base text-loop-dark bg-white rounded-md p-3 shadow resize-none"
             placeholder="This week I..."
             value={reflection}
             onChange={(e) => setReflection(e.target.value)}
           />
           <button
             onClick={handleReflectionSave}
-            className="bg-pink-600 text-white mt-4 px-5 py-2 rounded-lg text-base hover:bg-pink-700"
+            className="bg-loop-accent text-white mt-4 px-5 py-2 rounded-lg text-base hover:bg-cloud-shadow"
           >
             Save Reflection
           </button>
@@ -150,7 +150,7 @@ export default function Profile() {
             {[...gender_identity, ...cultural_identity, ...spirituality].map((tag, i) => (
               <span
                 key={i}
-                className="bg-pink-100 text-pink-700 text-base px-4 py-2 rounded-full shadow text-center font-medium"
+                className="bg-cloud-frost text-loop-dark text-base px-4 py-2 rounded-full shadow text-center font-medium"
               >
                 {tag}
               </span>
@@ -161,7 +161,7 @@ export default function Profile() {
             {mental_health.map((tag, i) => (
               <span
                 key={i}
-                className="bg-white text-pink-600 border border-pink-200 text-base px-4 py-2 rounded-full shadow-sm text-center font-medium"
+                className="bg-white text-loop-accent border border-loop-highlight text-base px-4 py-2 rounded-full shadow-sm text-center font-medium"
               >
                 {tag}
               </span>
@@ -172,27 +172,27 @@ export default function Profile() {
         {/* Main Section */}
         <section className="flex-1 space-y-10">
           <div className="w-full bg-white/80 rounded-xl p-8 shadow">
-            <p className="text-xl font-semibold text-pink-700 mb-2">Profile {completionPercent}% Complete</p>
-            <div className="w-full h-4 bg-pink-100 rounded-full overflow-hidden">
-              <div className="h-full bg-pink-600 transition-all" style={{ width: `${completionPercent}%` }}></div>
+            <p className="text-xl font-semibold text-loop-dark mb-2">Profile {completionPercent}% Complete</p>
+            <div className="w-full h-4 bg-cloud-serene rounded-full overflow-hidden">
+              <div className="h-full bg-loop-accent transition-all" style={{ width: `${completionPercent}%` }}></div>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white/80 p-8 rounded-xl shadow">
             <div className="flex-1">
-              <h3 className="text-3xl font-bold text-mauve-700 mb-3">Core Traits</h3>
+              <h3 className="text-3xl font-bold text-loop-dark mb-3">Core Traits</h3>
               <div className="flex gap-3 flex-wrap">
                 {traits.length ? traits.map((t, i) => (
-                  <span key={i} className="bg-mauve-100 text-mauve-800 text-base px-3 py-2 rounded-full">{t}</span>
-                )) : <p className="text-lg italic text-mauve-500">No traits available</p>}
+                  <span key={i} className="bg-cloud.frost text-loop-dark text-base px-3 py-2 rounded-full">{t}</span>
+                )) : <p className="text-lg italic text-cloud-depth">No traits available</p>}
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="text-3xl font-bold text-mauve-700 mb-3">Current Mood</h3>
+              <h3 className="text-3xl font-bold text-loop-dark mb-3">Current Mood</h3>
               {moodLog.length ? (
-                <p className="text-pink-800 text-lg">{moodLog.at(-1).mood}</p>
+                <p className="text-loop-dark text-lg">{moodLog.at(-1).mood}</p>
               ) : (
-                <p className="text-pink-400 italic text-lg">No mood data yet. Log your emotional weather!</p>
+                <p className="text-cloud-depth italic text-lg">No mood data yet. Log your emotional weather!</p>
               )}
             </div>
           </div>
@@ -206,12 +206,12 @@ export default function Profile() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white/80 rounded-lg p-8 shadow space-y-6">
-              <h3 className="text-3xl font-semibold text-pink-700">Mood Tracker</h3>
+              <h3 className="text-3xl font-semibold text-loop-dark">Mood Tracker</h3>
               <MoodSelector />
               <MoodTrendChart moodLog={moodLog} />
             </div>
             <div className="bg-white/80 rounded-lg p-8 shadow space-y-6">
-              <h3 className="text-3xl font-semibold text-pink-700">Sleep Tracker</h3>
+              <h3 className="text-3xl font-semibold text-loop-dark">Sleep Tracker</h3>
               <SleepEditor />
               <SleepBarChart sleepLog={sleepLog} />
             </div>

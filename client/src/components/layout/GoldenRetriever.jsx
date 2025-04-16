@@ -24,7 +24,7 @@ export default function GoldenRetriever() {
       {hearts.map((heart) => (
   <div
     key={heart.id}
-    className="absolute text-3xl text-pink-500 animate-float-down z-40 select-none"
+    className="absolute text-3xl text-white animate-float-down z-40 select-none drop-shadow-[0_0_2px_#1C3F66]"
     style={{ left: `${heart.left}%`, top: '80px' }}
   >
     ♥
