@@ -6,10 +6,11 @@ export default function IdentityCard() {
 
   if (!userData) return null;
 
+  // Fix the field mapping
   const {
     traits = [],
-    moods = [],
-    affirmation = "You are healing. You are whole. You are not alone.",
+    common_moods = [],
+    currentReflection = "You are healing. You are whole. You are not alone.",
   } = userData;
 
   return (
@@ -35,10 +36,10 @@ export default function IdentityCard() {
       </div>
 
       <div className="text-center">
-        <h3 className="text-xl font-bold text-mauve-700 mb-1">Current Mood</h3>
-        {moods.length > 0 ? (
+        <h3 className="text-xl font-bold text-mauve-700 mb-1">Common Moods</h3>
+        {common_moods.length > 0 ? (
           <div className="flex flex-wrap justify-center gap-2">
-            {moods.map((mood, i) => (
+            {common_moods.map((mood, i) => (
               <span
                 key={i}
                 className="px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800"
@@ -55,7 +56,7 @@ export default function IdentityCard() {
       </div>
 
       <div className="bg-pink-100 rounded-xl p-4 text-center text-pink-800 font-semibold italic">
-        “{affirmation}”
+        “{currentReflection}”
       </div>
     </div>
   );

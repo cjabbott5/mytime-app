@@ -11,8 +11,8 @@ const sections = [
   {
     title: 'Where I’ve Been',
     links: [
-      { label: 'Memory Center', path: '/where-ive-been/memory-center' },
-      { label: 'Reflection Prompts', path: '/where-ive-been/reflection-prompts' },
+      { label: 'Memory Center', path: '/where-ive-been/memory-organization/memory-center' },
+      { label: 'Reflection Prompts', path: '/where-ive-been/memory-collection/guided' },
     ],
   },
   {

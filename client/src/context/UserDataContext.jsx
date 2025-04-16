@@ -56,6 +56,7 @@ export const UserDataProvider = ({ children }) => {
               groundedDreamy: 70,
             },
             moodLog: [],
+            sleepLog: [],
           });
         }
       } catch (error) {

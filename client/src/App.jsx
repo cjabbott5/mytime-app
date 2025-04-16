@@ -23,7 +23,7 @@ import Onboarding from './pages/WhoIAm/Onboarding';
 import DreamPrompt from './pages/WhereImGoing/DreamPrompt';
 import GoalVisionBoard from './pages/WhereImGoing/GoalVisionBoard';
 
-// 🧠 ROUTE GROUPS
+// 🧠 WHERE I'VE BEEN ROUTES
 import { whereIveBeenRoutes } from './pages/WhereIveBeen/routes.jsx';
 
 export default function App() {
@@ -103,7 +103,7 @@ export default function App() {
         }
       />
 
-      {/* 🌸 WHERE I'VE BEEN ROUTES */}
+      {/* 🌸 WHERE I'VE BEEN ROUTES (incl. memory center + reflection prompts) */}
       {whereIveBeenRoutes}
 
       {/* 🚀 WHERE I'M GOING */}
