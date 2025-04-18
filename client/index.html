@@ -3,15 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>MyTime — Reflect, Remember, Reclaim</title>
+    <title>Loop — Reflect, Remember, Reclaim</title>
 
     <!-- ✅ Custom Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 
     <!-- Optional: Update favicon later -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- 🧠 Early Theme Injection Script (no flash!) -->
+    <script>
+      try {
+        const themes = {
+          pink: {
+            "--color-theme": "#F9A8D4",
+            "--color-accent": "#DB2777",
+            "--color-text": "#4B5563",
+          },
+          blue: {
+            "--color-theme": "#93C5FD",
+            "--color-accent": "#2563EB",
+            "--color-text": "#1E40AF",
+          },
+          purple: {
+            "--color-theme": "#E9D5FF",
+            "--color-accent": "#A855F7",
+            "--color-text": "#6B21A8",
+          },
+        };
+      } catch (e) {
+        console.warn("Theme preload failed", e);
+      }
+    </script>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

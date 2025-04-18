@@ -5,14 +5,17 @@ import App from './App.jsx';
 import './index.css';
 
 import { UserDataProvider } from '@/context/UserDataContext';
-import { MemoryProvider } from '@/context/MemoryContext'; // ✅ Add this
+import { MemoryProvider } from '@/context/MemoryContext';
+import { ThemeProvider } from '@/context/ThemeContext'; // 🧠 Add this import
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <UserDataProvider>
-        <MemoryProvider> {/* ✅ Wrap App with MemoryProvider */}
-          <App />
+        <MemoryProvider>
+          <ThemeProvider> {/* 🧠 Wrap App with ThemeProvider */}
+            <App />
+          </ThemeProvider>
         </MemoryProvider>
       </UserDataProvider>
     </BrowserRouter>

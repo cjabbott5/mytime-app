@@ -25,35 +25,31 @@ import {
   getDownloadURL
 } from 'firebase/storage';
 
-// Firebase Config
+// ✅ Updated Firebase Config (loop-app-b9fd8)
 const firebaseConfig = {
-  apiKey: "AIzaSyCmTFHM2PYDHhuoVl0IzKbDmuEqdIzGsWY",
-  authDomain: "mytime-fe4ac.firebaseapp.com",
-  projectId: "mytime-fe4ac",
-  storageBucket: "mytime-fe4ac.appspot.com",
-  messagingSenderId: "766248939233",
-  appId: "1:766248939233:web:845b8b4f1ed29711b751a0",
-  measurementId: "G-C9TX2DXYQT"
+  apiKey: "AIzaSyCIFuwvPOfti0E1lb2rb57-zQS42wq1rlI",
+  authDomain: "loop-app-b9fd8.firebaseapp.com",
+  projectId: "loop-app-b9fd8",
+  storageBucket: "loop-app-b9fd8.appspot.com",
+  messagingSenderId: "607084574080",
+  appId: "1:607084574080:web:edffafe9b84cc3b2eb3d65",
+  measurementId: "G-RLVWMTYS7F"
 };
 
 // Initialize App
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app, 'gs://mytime-fe4ac.firebasestorage.app');
+const storage = getStorage(app); // ✅ updated bucket URL not needed
 
 // 🔐 AUTH HELPERS
-
 const googleProvider = new GoogleAuthProvider();
 
 const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
-
 const registerWithEmail = (email, password) =>
   createUserWithEmailAndPassword(auth, email, password);
-
 const loginWithEmail = (email, password) =>
   signInWithEmailAndPassword(auth, email, password);
-
 const logout = () => signOut(auth);
 
 const checkAuthState = () =>
@@ -66,7 +62,6 @@ const checkAuthState = () =>
 const getCurrentUserId = () => getAuth().currentUser?.uid || null;
 
 // 🔥 FIRESTORE HELPERS
-
 const getUserData = async (userId) => {
   const docRef = doc(db, 'users', userId);
   const docSnap = await getDoc(docRef);
@@ -84,7 +79,6 @@ const updateUserData = async (userId, userData) => {
 };
 
 // ☁️ STORAGE HELPERS
-
 const uploadFile = async (file, filePath) => {
   const ref = storageRef(storage, filePath);
   const uploadTask = uploadBytesResumable(ref, file);
@@ -106,7 +100,6 @@ const uploadFile = async (file, filePath) => {
 };
 
 // 🌐 EXPORTS
-
 export {
   auth,
   db,
@@ -120,5 +113,5 @@ export {
   registerWithEmail,
   loginWithEmail,
   logout,
-  getCurrentUserId // ✅ added export
+  getCurrentUserId
 };

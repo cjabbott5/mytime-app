@@ -2,9 +2,9 @@ const onboardingCategories = [
   {
     id: "welcome",
     type: "welcome",
-    title: "Welcome to MyTime",
+    title: "Welcome to Loop",
     description:
-      "We're so glad you're here. MyTime is a gentle space for organizing memories, exploring your story, and healing in your own time."
+      "We're so glad you're here. Loop is a gentle space for organizing memories, exploring your story, and healing in your own time."
   },
   {
     id: "basic_info_1",
@@ -115,7 +115,7 @@ const onboardingCategories = [
       {
         id: "top_goals",
         type: "multi",
-        label: "Top goals for using MyTime",
+        label: "Top goals for using Loop",
         max: 3,
         options: [
           "Increase memory clarity", "Organize life story", "Track healing journey",

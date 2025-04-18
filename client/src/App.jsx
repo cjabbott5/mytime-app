@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LayoutWrapper from "./components/layout/LayoutWrapper";
 
@@ -15,6 +15,13 @@ import Dashboard from './pages/Dashboard';
 import WhoIAm from './pages/WhoIAm';
 import WhereImGoing from './pages/WhereImGoing';
 import Settings from './pages/Settings';
+import GroundMe from './components/sections/groundme/GroundMeMain.jsx'; // ✅ GroundMe main screen
+import BreathingGuide from './components/sections/groundme/BreathingGuide.jsx'; // ✅ Guided breathing
+import BreathingSelector from '@/components/sections/groundme/BreathingSelector';
+import BoxBreathing from '@/components/sections/groundme/breathing/BoxBreathing';
+import FourSevenEight from '@/components/sections/groundme/breathing/FourSevenEight';
+import MindfulBreathing from '@/components/sections/groundme/breathing/MindfulBreathing';
+import PacedBreathing from '@/components/sections/groundme/breathing/PacedBreathing';
 
 // 🔸 Sub-Pages (Protected)
 import Profile from './pages/WhoIAm/Profile';
@@ -29,11 +36,11 @@ import { whereIveBeenRoutes } from './pages/WhereIveBeen/routes.jsx';
 export default function App() {
   return (
     <Routes>
-      {/* 🏠 Public Landing Page */}
+      {/* 🏠 Public Landing Pages */}
       <Route
         path="/"
         element={
-          <LayoutWrapper>
+          <LayoutWrapper hideHeader>
             <HeroSection />
           </LayoutWrapper>
         }
@@ -50,8 +57,9 @@ export default function App() {
       {/* 🔐 Auth Pages */}
       <Route path="/auth/login" element={<Login />} />
       <Route path="/auth/register" element={<Register />} />
+      <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
 
-      {/* 🔐 Protected Routes */}
+      {/* 🛡 Protected Routes */}
       <Route
         path="/dashboard"
         element={
@@ -62,6 +70,72 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
+    {/* 🧘 Ground Me main screen */}
+  <Route
+    path="/ground-me"
+    element={
+      <ProtectedRoute>
+        <LayoutWrapper hideHeader>
+          <GroundMe />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    }
+  />
+
+  {/* ✅ Individual breathing session pages */}
+  <Route
+    path="/ground-me/breathing/box"
+    element={
+      <ProtectedRoute>
+        <LayoutWrapper hideHeader>
+          <BoxBreathing />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    }
+  />
+  <Route
+    path="/ground-me/breathing/four-seven-eight"
+    element={
+      <ProtectedRoute>
+        <LayoutWrapper hideHeader>
+          <FourSevenEight />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    }
+  />
+  <Route
+    path="/ground-me/breathing/mindful"
+    element={
+      <ProtectedRoute>
+        <LayoutWrapper hideHeader>
+          <MindfulBreathing />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    }
+  />
+  <Route
+    path="/ground-me/breathing/paced"
+    element={
+      <ProtectedRoute>
+        <LayoutWrapper hideHeader>
+          <PacedBreathing />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    }
+  />
+<Route
+  path="/ground-me/breathing"
+  element={
+    <ProtectedRoute>
+      <LayoutWrapper hideHeader>
+        <BreathingSelector />
+      </LayoutWrapper>
+    </ProtectedRoute>
+  }
+/>
+
+      {/* 👤 Who I Am */}
       <Route
         path="/who-i-am"
         element={
@@ -103,10 +177,10 @@ export default function App() {
         }
       />
 
-      {/* 🌸 WHERE I'VE BEEN ROUTES (incl. memory center + reflection prompts) */}
+      {/* 🌸 Where I’ve Been */}
       {whereIveBeenRoutes}
 
-      {/* 🚀 WHERE I'M GOING */}
+      {/* 🚀 Where I’m Going */}
       <Route
         path="/where-im-going"
         element={
@@ -138,7 +212,7 @@ export default function App() {
         }
       />
 
-      {/* 🛠 SETTINGS */}
+      {/* ⚙️ Settings */}
       <Route
         path="/settings"
         element={

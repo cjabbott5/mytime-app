@@ -1,41 +1,79 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { db, getCurrentUserId } from '../config/firebase';
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  deleteDoc,
+  getDocs
+} from 'firebase/firestore';
 
 const MemoryContext = createContext();
-
 export const useMemory = () => useContext(MemoryContext);
 
 export const MemoryProvider = ({ children }) => {
   const [memories, setMemories] = useState([]);
 
-  // Load from localStorage on first render
+  // Load memories from Firestore on mount
   useEffect(() => {
-    const stored = localStorage.getItem('mytime_memories');
-    if (stored) {
-      setMemories(JSON.parse(stored));
-    }
+    const fetchMemories = async () => {
+      const uid = getCurrentUserId();
+      if (!uid) return;
+
+      try {
+        const snapshot = await getDocs(collection(db, 'users', uid, 'memories'));
+        const loaded = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setMemories(loaded);
+      } catch (err) {
+        console.error('Error loading memories:', err);
+      }
+    };
+
+    fetchMemories();
   }, []);
 
-  // Save to localStorage whenever memories change
-  useEffect(() => {
-    localStorage.setItem('mytime_memories', JSON.stringify(memories));
-  }, [memories]);
+  // Add memory to Firestore
+  const addMemory = async (newMemory) => {
+    const uid = getCurrentUserId();
+    if (!uid) return;
 
-  const addMemory = (newMemory) => {
-    const memoryWithId = {
-      ...newMemory,
-      id: Date.now().toString() // simple unique ID for now
-    };
-    setMemories((prev) => [memoryWithId, ...prev]);
+    try {
+      const colRef = collection(db, 'users', uid, 'memories');
+      const docRef = await addDoc(colRef, newMemory);
+      setMemories((prev) => [{ ...newMemory, id: docRef.id }, ...prev]);
+    } catch (err) {
+      console.error('Error adding memory:', err);
+    }
   };
 
-  const deleteMemory = (id) => {
-    setMemories((prev) => prev.filter((m) => m.id !== id));
+  // Delete memory from Firestore
+  const deleteMemory = async (id) => {
+    const uid = getCurrentUserId();
+    if (!uid) return;
+
+    try {
+      await deleteDoc(doc(db, 'users', uid, 'memories', id));
+      setMemories((prev) => prev.filter((m) => m.id !== id));
+    } catch (err) {
+      console.error('Error deleting memory:', err);
+    }
   };
 
-  const updateMemory = (updated) => {
-    setMemories((prev) =>
-      prev.map((m) => (m.id === updated.id ? updated : m))
-    );
+  // Update memory in Firestore
+  const updateMemory = async (updated) => {
+    const uid = getCurrentUserId();
+    if (!uid) return;
+
+    try {
+      const docRef = doc(db, 'users', uid, 'memories', updated.id);
+      await updateDoc(docRef, updated);
+      setMemories((prev) =>
+        prev.map((m) => (m.id === updated.id ? updated : m))
+      );
+    } catch (err) {
+      console.error('Error updating memory:', err);
+    }
   };
 
   return (

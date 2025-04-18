@@ -90,6 +90,18 @@ export const whereIveBeenRoutes = [
       </ProtectedRoute>
     }
   />,
+  // ✅ Optional alias (shortcut) route
+  <Route
+    key="memory-center-alias"
+    path="/where-ive-been/memory-center"
+    element={
+      <ProtectedRoute>
+        <LayoutWrapper>
+          <MemoryCenter />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    }
+  />,
   <Route
     key="memory-detail"
     path="/where-ive-been/memory-organization/memory/:id"

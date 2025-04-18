@@ -5,10 +5,30 @@ export default function EditSectionModal({ title, initialValues, onSave, section
   const [selected, setSelected] = useState(initialValues || []);
 
   // Grab prefill options from onboarding categories
+  let options = [];
+
+// If editing Identity, merge from gender, cultural, and spirituality fields
+if (sectionKey === 'identity') {
+  const identityKeys = ['gender_identity', 'cultural_identity', 'spirituality'];
+
+  identityKeys.forEach((key) => {
+    const cat = onboardingCategories.find(cat =>
+      cat.fields?.some(field => field.id === key)
+    );
+    const field = cat?.fields?.find(f => f.id === key);
+    if (field?.options) options = [...options, ...field.options];
+  });
+
+  // Optional: remove duplicates
+  options = [...new Set(options)];
+} else {
+  // Fallback to default single-section logic
   const category = onboardingCategories.find(cat =>
     cat.fields?.some(field => field.id === sectionKey)
   );
-  const options = category?.fields?.find(f => f.id === sectionKey)?.options || [];
+  options = category?.fields?.find(f => f.id === sectionKey)?.options || [];
+}
+
 
   const toggleTag = (tag) => {
     if (selected.includes(tag)) {

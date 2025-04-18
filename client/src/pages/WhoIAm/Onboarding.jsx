@@ -4,15 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { useUserData } from '@/context/UserDataContext';
 import onboardingCategories from '@/data/onboardingCategories';
 import onboardingFieldMap from '@/utils/mapOnboardingToProfile';
-
 import { saveUserData, checkAuthState } from '@/config/firebase';
+import LayoutWrapper from '@/components/layout/LayoutWrapper';
 
 import OnboardingStep from '@/components/sections/onboarding/OnboardingStep';
 import OnboardingSummary from '@/components/sections/onboarding/OnboardingSummary';
 import OnboardingProgress from '@/components/sections/onboarding/OnboardingProgress';
 import useAutoSaveUserData from '@/hooks/useAutoSaveUserData';
-
-import cloudBg from '@/assets/cloud-bg.jpg';
 
 export default function Onboarding() {
   const [stepIndex, setStepIndex] = useState(0);
@@ -46,7 +44,6 @@ export default function Onboarding() {
         acc[onboardingFieldMap[key] || key] = val;
         return acc;
       }, {});
-
       await saveUserData(user.uid, flatProfile);
       navigate('/who-i-am/profile');
     } catch (err) {
@@ -55,37 +52,36 @@ export default function Onboarding() {
   };
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center flex items-center justify-center px-6 py-12"
-      style={{ backgroundImage: `url(${cloudBg})` }}
-    >
-      <div className="bg-white/90 rounded-2xl shadow-xl p-8 max-w-2xl w-full space-y-6 backdrop-blur-sm border border-loop.highlight">
-        {!isSummaryStep && (
-          <OnboardingProgress
-            currentStep={stepIndex}
-            totalSteps={onboardingCategories.length}
-            title={currentStep?.title}
-          />
-        )}
-
-        {isSummaryStep ? (
-          userData ? (
-            <OnboardingSummary onBack={handleBack} onFinish={handleFinish} />
+    <LayoutWrapper hideHeader>
+      <div className="min-h-screen w-full px-6 py-12 flex flex-col items-center justify-center">
+        <div className="w-full max-w-none">
+          {!isSummaryStep && (
+            <OnboardingProgress
+              currentStep={stepIndex}
+              totalSteps={onboardingCategories.length}
+              title={currentStep?.title}
+            />
+          )}
+  
+          {isSummaryStep ? (
+            userData ? (
+              <OnboardingSummary onBack={handleBack} onFinish={handleFinish} />
+            ) : (
+              <p className="text-center text-accent italic">Loading summary...</p>
+            )
           ) : (
-            <p className="text-center text-loop.accent italic">Loading summary...</p>
-          )
-        ) : (
-          <OnboardingStep
-            step={currentStep}
-            onNext={handleNext}
-            onBack={handleBack}
-            isFirst={stepIndex === 0}
-            isLast={stepIndex === onboardingCategories.length - 1}
-            formData={userData}
-            updateUserData={updateUserData}
-          />
-        )}
+            <OnboardingStep
+              step={currentStep}
+              onNext={handleNext}
+              onBack={handleBack}
+              isFirst={stepIndex === 0}
+              isLast={stepIndex === onboardingCategories.length - 1}
+              formData={userData}
+              updateUserData={updateUserData}
+            />
+          )}
+        </div>
       </div>
-    </div>
-  );
+    </LayoutWrapper>
+  );  
 }

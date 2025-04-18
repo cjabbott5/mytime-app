@@ -6,6 +6,7 @@ import {
   GoogleAuthProvider,
 } from 'firebase/auth';
 import { auth } from '../../config/firebase';
+import LayoutWrapper from '@/components/layout/LayoutWrapper';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -47,72 +48,69 @@ const Login = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-6 bg-cover"
-      style={{
-        backgroundImage: `url('/src/assets/cloud-bg.jpg')`,
-      }}      
-    >
-      <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full text-center">
-        <h2 className="text-3xl font-bold text-loop-primary mb-6">Welcome Back</h2>
+    <LayoutWrapper hideHeader>
+      <div className="min-h-screen flex items-center justify-center p-6 transform scale-150 transition-transform duration-300">
+        <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl max-w-md w-full text-center">
+          <h2 className="text-3xl font-bold text-accent mb-6">Welcome Back</h2>
 
-        {/* Email/Password Form */}
-        <form onSubmit={handleEmailLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-loop-primary"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-loop-primary"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          {/* Email/Password Form */}
+          <form onSubmit={handleEmailLogin} className="space-y-4">
+            <input
+              type="email"
+              placeholder="Email"
+              className="w-full px-4 py-3 border border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full px-4 py-3 border border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="submit"
+              className="bg-accent hover:bg-theme text-white font-bold w-full py-3 rounded-lg transition shadow-md hover:shadow-lg"
+            >
+              Log In
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm text-gray-500">
+              <span className="bg-white px-2">or</span>
+            </div>
+          </div>
+
+          {/* Google Login */}
           <button
-            type="submit"
-            className="bg-loop-primary hover:bg-loop-dark text-white font-bold w-full py-3 rounded-lg transition shadow-md hover:shadow-lg"
+            onClick={handleGoogleLogin}
+            className="bg-white border border-gray-300 text-gray-800 font-medium w-full py-3 rounded-lg shadow-sm hover:bg-gray-100 flex items-center justify-center gap-2"
           >
-            Log In
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              className="w-5 h-5"
+            />
+            Continue with Google
           </button>
-        </form>
 
-        {/* Divider */}
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300" />
-          </div>
-          <div className="relative flex justify-center text-sm text-gray-500">
-            <span className="bg-white px-2">or</span>
-          </div>
+          <p className="text-lg mt-6 text-body">
+            Don’t have an account?{' '}
+            <Link to="/auth/register" className="text-accent font-semibold underline">
+              Create one
+            </Link>
+          </p>
         </div>
-
-        {/* Google Login */}
-        <button
-          onClick={handleGoogleLogin}
-          className="bg-white border border-gray-300 text-gray-800 font-medium w-full py-3 rounded-lg shadow-sm hover:bg-gray-100 flex items-center justify-center gap-2"
-        >
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            alt="Google"
-            className="w-5 h-5"
-          />
-          Continue with Google
-        </button>
-
-        <p className="text-sm mt-6">
-          Don’t have an account?{' '}
-          <Link to="/auth/register" className="text-loop-primary font-semibold underline">
-            Create one
-          </Link>
-        </p>
       </div>
-    </div>
+    </LayoutWrapper>
   );
 };
 

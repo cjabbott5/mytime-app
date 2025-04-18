@@ -1,46 +1,37 @@
 import { useState } from 'react';
-import { getAuth } from 'firebase/auth';
 import { useUserData } from '@/context/UserDataContext';
-import { storage } from '@/config/firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import cloudBg from '@/assets/cloud-bg.jpg';
-import EditSectionModal from '../../components/sections/profile/EditSectionModal';
-import MoodTrendChart from '../../components/sections/profile/MoodTrendChart';
-import SleepBarChart from '../../components/sections/profile/SleepBarChart';
-import MoodSelector from '../../components/sections/profile/MoodSelector';
-import SleepEditor from '../../components/sections/profile/SleepEditor';
-import {
-  FaUserMd, FaPills, FaDog, FaMusic, FaDumbbell, FaPaintBrush, FaBrain, FaSun,
-  FaBolt, FaClock, FaSeedling, FaTransgenderAlt, FaRegCalendarAlt, FaUserFriends, FaEdit
-} from 'react-icons/fa';
+import { useTheme } from '@/context/ThemeContext';
+import themeConfig from '@/config/themeConfig';
+import infinityLoop from '@/assets/InfinityLoop-Large.png';
+import EditSectionModal from '@/components/sections/profile/EditSectionModal';
+import MoodSelector from '@/components/sections/profile/MoodSelector';
+import SleepEditor from '@/components/sections/profile/SleepEditor';
+import { FaUserCircle, FaUserMd, FaPills, FaDog, FaMusic, FaDumbbell, FaPaintBrush, FaBrain, FaSun, FaBolt, FaClock, FaSeedling, FaTransgenderAlt, FaRegCalendarAlt, FaUserFriends, FaEdit, FaCamera } from 'react-icons/fa';
 import { GiMeditation } from 'react-icons/gi';
 
 const safeArray = (val) => (Array.isArray(val) ? val : []);
 
 export default function Profile() {
   const { userData, updateUserData } = useUserData();
-  const [uploading, setUploading] = useState(false);
+  const { selectedTheme } = useTheme();
+  const theme = themeConfig[selectedTheme];
   const [editModal, setEditModal] = useState(null);
-  const [reflection, setReflection] = useState(userData.weeklyReflection || '');
+  const [medsTaken, setMedsTaken] = useState(Array(7).fill(false));
 
   const {
     name = '',
     pronouns = '',
     avatar = '',
-    top_goals = [],
-    traits = [],
     support_system = [],
     coping_tools = [],
-    lifestyle = [],
-    moodLog = [],
-    sleepLog = [],
-    weeklyReflection = '',
+    gender_identity = [],
+    cultural_identity = [],
+    spirituality = [],
+    mental_health = [],
+    current_reflection = '',
+    top_goals = [],
+    traits = []
   } = userData;
-
-  const gender_identity = safeArray(userData.gender_identity);
-  const cultural_identity = safeArray(userData.cultural_identity);
-  const spirituality = safeArray(userData.spirituality);
-  const mental_health = safeArray(userData.mental_health);
 
   const iconMap = {
     Therapist: <FaUserMd />, Psychiatrist: <FaUserMd />, "Pet / animal": <FaDog />,
@@ -52,172 +43,155 @@ export default function Profile() {
     Spontaneous: <FaBolt />, "Busy schedule": <FaClock />
   };
 
-  const TOTAL_SECTIONS = 5;
-  const filledCount = [top_goals, coping_tools, support_system, lifestyle, traits].filter(arr => arr.length).length;
-  const completionPercent = Math.round((filledCount / TOTAL_SECTIONS) * 100);
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const user = getAuth().currentUser;
-    if (!user) return;
-    setUploading(true);
-    const storageRef = ref(storage, `profile-pics/${user.uid}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    uploadTask.on('state_changed', null, console.error, async () => {
-      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-      updateUserData({ avatar: downloadURL });
-      setUploading(false);
-    });
-  };
-
-  const handleReflectionSave = () => {
-    updateUserData({ weeklyReflection: reflection });
-  };
-
   const renderPillList = (title, values, sectionKey) => (
-    <div className="bg-white/80 rounded-xl p-8 shadow relative">
-      <h3 className="text-3xl font-bold text-loop-dark mb-6">{title}</h3>
-      <button
-        onClick={() => setEditModal({ title, sectionKey, initialValues: values })}
-        className="absolute top-6 right-6 text-loop-accent hover:text-cloud-shadow text-xl"
-      >
-        <FaEdit />
-      </button>
-      <div className="flex flex-wrap gap-4">
+    <div className="bg-white/90 rounded-xl p-6 shadow text-center border border-card w-full">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-2xl font-bold text-accent-dark">{title}</h3>
+        <button
+          onClick={() => setEditModal({ title, sectionKey, initialValues: values })}
+          className="text-accent hover:text-body text-2xl"
+        >
+          <FaEdit />
+        </button>
+      </div>
+      <div className="flex flex-wrap justify-center gap-4">
         {values.slice(0, 3).map((item, i) => (
-          <span key={i} className="bg-cloud-serene text-loop-dark px-4 py-3 text-base rounded-2xl shadow flex flex-col items-center gap-1 w-28 h-28 text-center justify-center">
-            <span className="text-3xl">{iconMap[item]}</span>
-            <span className="text-base mt-1">{item}</span>
+          <span key={i} className="bg-card text-body px-4 py-3 text-lg rounded-full shadow flex items-center gap-2">
+            <span className="text-2xl">{iconMap[item]}</span>
+            {item}
           </span>
         ))}
         {values.length > 3 && (
-          <span className="text-base text-loop-accent">{`+${values.length - 3} more`}</span>
+          <span className="text-lg text-accent">+{values.length - 3} more</span>
         )}
       </div>
     </div>
   );
 
+  const renderMedTracker = () => (
+    <div className="bg-white/90 rounded-xl p-6 shadow text-center border border-card">
+      <h3 className="text-xl font-bold text-accent-dark mb-2">Medication Tracker</h3>
+      <div className="flex justify-center gap-3">
+        {["S", "M", "T", "W", "T", "F", "S"].map((day, i) => (
+          <button
+            key={i}
+            onClick={() => setMedsTaken(medsTaken.map((val, idx) => idx === i ? !val : val))}
+            className={`w-8 h-8 text-sm rounded-full font-semibold ${
+              medsTaken[i] ? 'bg-accent text-white' : 'bg-card text-body'
+            }`}
+          >
+            {day}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
-    <div
-      className="min-h-screen bg-cover bg-center px-6 pb-16 pt-4 text-lg"
-      style={{ backgroundImage: `url(${cloudBg})` }}
-    >
-      <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row gap-8">
-        {/* Sidebar */}
-        <aside className="w-full md:w-[320px] bg-white/80 rounded-xl shadow-inner p-8 flex flex-col items-center text-center">
-          <div className="relative mb-4 hover:scale-105 transition">
-            <div className="w-56 h-56 rounded-full overflow-hidden border-[6px] border-loop-accent">
-              <img
-                src={avatar || 'https://www.gravatar.com/avatar/?d=mp&f=y'}
-                alt="Profile"
-                className="object-cover w-full h-full"
-              />
-            </div>
-            <label
-              className={`absolute bottom-2 right-2 text-white text-sm px-3 py-1 rounded cursor-pointer ${
-                uploading ? 'bg-gray-400' : 'bg-loop-accent'
-              }`}
-            >
-              {uploading ? 'Uploading…' : 'Edit'}
+    <div className="min-h-screen relative overflow-hidden bg-cover bg-center" style={{ backgroundImage: `url(${theme.bgImage})` }}>
+      <div className="absolute inset-0 bg-white/40 backdrop-blur-md z-0" />
+
+      <img src={infinityLoop} alt="Infinity Loop" className="absolute top-1/2 left-1/2 w-[1900px] h-[1300px] pointer-events-none -translate-x-1/2 -translate-y-1/2 z-10 opacity-70" />
+
+     {/* 🧭 Breadcrumb - move to top left corner */}
+<p className="absolute top-4 left-4 text-sm text-loop-accent italic z-30">
+Dashboard &gt; Who I Am
+</p>
+
+{/* 👋 Welcome Message - centered, with more spacing */}
+<div className="relative z-30 flex flex-col items-center mt-48">
+  <p className="text-6xl font-semibold text-loop-dark mb-4">
+    Welcome back, {name?.split(' ')[0] || 'friend'}. Here’s your snapshot today.
+  </p>
+</div>
+
+
+      <div className="relative flex items-center justify-center gap-32 z-20 mt-[400px] -translate-x-12">
+        <div className="grid grid-cols-2 gap-6 w-[700px] -translate-y-2 -translate-x-24">
+          {renderPillList('Coping Tools', coping_tools, 'coping_tools')}
+          {renderPillList('Support System', support_system, 'support_system')}
+          {renderPillList('Mental Health', mental_health, 'mental_health')}
+          {renderPillList('Goals', top_goals, 'top_goals')}
+        </div>
+
+        <div className="flex flex-col items-center justify-center text-center gap-4 z-30 relative group -translate-x-32">
+          <div className="relative w-120 h-120 sm:w-120 sm:h-120 rounded-full overflow-hidden border-4 border-accent shadow-xl animate-pulse-glow bg-white/40">
+            {avatar ? (
+              <img src={avatar} alt="Profile Avatar" className="w-full h-full object-cover" />
+            ) : (
+              <div className="flex items-center justify-center w-full h-full text-accent-dark">
+                <FaUserCircle className="text-[80px] sm:text-[110px]" />
+              </div>
+            )}
+            <label className="absolute inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer text-white">
               <input
                 type="file"
                 accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      updateUserData({ avatar: reader.result });
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
                 className="hidden"
-                onChange={handleImageUpload}
-                disabled={uploading}
               />
+              <FaCamera className="text-2xl" />
             </label>
           </div>
+          <p className="text-3xl sm:text-4xl font-bold text-accent-dark">{name}</p>
+          <p className="text-xl sm:text-2xl text-body">{pronouns}</p>
+          {current_reflection && <p className="italic text-3xl font-bold text-accent-dark mt-2 max-w-[300px]">“{current_reflection}”</p>}
+        </div>
 
-          <h2 className="text-2xl font-bold text-loop-dark">{name || 'Your Name'}</h2>
-          <p className="text-lg text-cloud-shadow">{pronouns || 'Your pronouns'}</p>
-
-          <textarea
-            className="mt-4 w-full text-base text-loop-dark bg-white rounded-md p-3 shadow resize-none"
-            placeholder="This week I..."
-            value={reflection}
-            onChange={(e) => setReflection(e.target.value)}
-          />
-          <button
-            onClick={handleReflectionSave}
-            className="bg-loop-accent text-white mt-4 px-5 py-2 rounded-lg text-base hover:bg-cloud-shadow"
-          >
-            Save Reflection
-          </button>
-
-          <div className="mt-6 flex flex-col gap-2 w-full">
-            {[...gender_identity, ...cultural_identity, ...spirituality].map((tag, i) => (
-              <span
-                key={i}
-                className="bg-cloud-frost text-loop-dark text-base px-4 py-2 rounded-full shadow text-center font-medium"
-              >
-                {tag}
-              </span>
-            ))}
+        <div className="flex flex-col gap-6 w-[340px] -translate-y-2">
+          <div className="bg-white/90 rounded-xl p-6 shadow text-center border border-card">
+            <h3 className="text-xl font-bold text-accent-dark mb-2">Mood Tracker</h3>
+            <MoodSelector />
           </div>
-
-          <div className="mt-6 flex flex-col gap-2 w-full">
-            {mental_health.map((tag, i) => (
-              <span
-                key={i}
-                className="bg-white text-loop-accent border border-loop-highlight text-base px-4 py-2 rounded-full shadow-sm text-center font-medium"
-              >
-                {tag}
-              </span>
-            ))}
+          <div className="bg-white/90 rounded-xl p-6 shadow text-center border border-card">
+            <h3 className="text-xl font-bold text-accent-dark mb-2">Sleep Tracker</h3>
+            <SleepEditor />
           </div>
-        </aside>
-
-        {/* Main Section */}
-        <section className="flex-1 space-y-10">
-          <div className="w-full bg-white/80 rounded-xl p-8 shadow">
-            <p className="text-xl font-semibold text-loop-dark mb-2">Profile {completionPercent}% Complete</p>
-            <div className="w-full h-4 bg-cloud-serene rounded-full overflow-hidden">
-              <div className="h-full bg-loop-accent transition-all" style={{ width: `${completionPercent}%` }}></div>
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white/80 p-8 rounded-xl shadow">
-            <div className="flex-1">
-              <h3 className="text-3xl font-bold text-loop-dark mb-3">Core Traits</h3>
-              <div className="flex gap-3 flex-wrap">
-                {traits.length ? traits.map((t, i) => (
-                  <span key={i} className="bg-cloud.frost text-loop-dark text-base px-3 py-2 rounded-full">{t}</span>
-                )) : <p className="text-lg italic text-cloud-depth">No traits available</p>}
-              </div>
-            </div>
-            <div className="flex-1">
-              <h3 className="text-3xl font-bold text-loop-dark mb-3">Current Mood</h3>
-              {moodLog.length ? (
-                <p className="text-loop-dark text-lg">{moodLog.at(-1).mood}</p>
-              ) : (
-                <p className="text-cloud-depth italic text-lg">No mood data yet. Log your emotional weather!</p>
-              )}
-            </div>
-          </div>
-
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {renderPillList('My Goals', top_goals, 'top_goals')}
-            {renderPillList('Coping Tools', coping_tools, 'coping_tools')}
-            {renderPillList('Support System', support_system, 'support_system')}
-            {renderPillList('Lifestyle', lifestyle, 'lifestyle')}
-          </section>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white/80 rounded-lg p-8 shadow space-y-6">
-              <h3 className="text-3xl font-semibold text-loop-dark">Mood Tracker</h3>
-              <MoodSelector />
-              <MoodTrendChart moodLog={moodLog} />
-            </div>
-            <div className="bg-white/80 rounded-lg p-8 shadow space-y-6">
-              <h3 className="text-3xl font-semibold text-loop-dark">Sleep Tracker</h3>
-              <SleepEditor />
-              <SleepBarChart sleepLog={sleepLog} />
-            </div>
-          </div>
-        </section>
+          {renderMedTracker()}
+        </div>
       </div>
+
+      <div className="relative z-30 mt-24 mb-12 px-8 w-full max-w-6xl mx-auto">
+  <div className="bg-white rounded-2xl p-8 border border-loop-accent shadow-md">
+    <div className="flex justify-between items-center mb-4">
+      <h3 className="text-2xl font-semibold text-loop-primary">Identity</h3>
+      <button
+        onClick={() =>
+          setEditModal({
+            title: 'Identity',
+            sectionKey: 'identity',
+            initialValues: [...safeArray(gender_identity), ...safeArray(cultural_identity), ...safeArray(spirituality)],
+          })
+        }
+        className="text-loop-dark hover:text-body text-2xl"
+      >
+        <FaEdit />
+      </button>
+    </div>
+
+    {/* Center pills */}
+    <div className="flex flex-wrap justify-center gap-3">
+      {[...safeArray(gender_identity), ...safeArray(cultural_identity), ...safeArray(spirituality)].map((item, i) => (
+        <span
+          key={i}
+          className="bg-loop-highlight/60 text-body px-4 py-2 rounded-full flex items-center gap-2 text-lg shadow-inner border border-cloud-overlay"
+        >
+          <span className="text-xl">{iconMap[item]}</span>
+          {item}
+        </span>
+      ))}
+    </div>
+  </div>
+</div>
 
       {editModal && (
         <EditSectionModal

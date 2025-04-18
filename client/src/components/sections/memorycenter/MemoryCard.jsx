@@ -1,11 +1,12 @@
 import React from "react";
+import classNames from "classnames"; // optional but handy for conditional classes
 
 const moodColors = {
-  positive: "bg-yellow-100",
-  grounded: "bg-green-100",
-  hard: "bg-red-100",
-  dissociation: "bg-purple-100",
-  identity: "bg-blue-100",
+  positive: "ring-yellow-300",
+  grounded: "ring-green-300",
+  hard: "ring-red-300",
+  dissociation: "ring-purple-300",
+  identity: "ring-blue-300",
 };
 
 const tagColors = {
@@ -41,13 +42,15 @@ const getTagTheme = (tag) => {
 const MemoryCard = ({ memory, onEdit, onDelete, viewMode = "default" }) => {
   const { title, date, image, tags = [], mood } = memory;
   const moodGroup = getMoodGroup(mood);
-  const moodColor = moodColors[moodGroup] || "bg-gray-100";
+  const moodRing = moodColors[moodGroup] || "ring-gray-200";
 
   return (
     <div
-      className={`rounded-lg shadow-md p-5 space-y-3 transition-all duration-300 ${
-        viewMode === "timeline" ? "bg-white border-l-4 border-rose-200" : moodColor
-      }`}
+      className={classNames(
+        "rounded-xl shadow-md p-5 space-y-3 bg-white transition-all duration-300 hover:scale-[1.01] hover:shadow-lg",
+        "ring-2",
+        moodRing
+      )}
     >
       {image && (
         <img
@@ -57,21 +60,21 @@ const MemoryCard = ({ memory, onEdit, onDelete, viewMode = "default" }) => {
         />
       )}
 
-      <div className="text-xl font-bold text-rose-600">{title}</div>
-      <div className="text-sm text-gray-500">{new Date(date).toDateString()}</div>
+      <div className="text-xl font-semibold text-loop-primary">{title}</div>
+      <div className="text-sm text-loop-dark/70">{new Date(date).toDateString()}</div>
 
       <div className="flex flex-wrap gap-2">
         {tags.map((tag, i) => (
           <span
             key={i}
-            className={`px-2 py-1 rounded-full text-xs ${tagColors[getTagTheme(tag)]}`}
+            className={`px-2 py-1 rounded-full text-xs font-medium ${tagColors[getTagTheme(tag)]}`}
           >
             #{tag}
           </span>
         ))}
         {mood && (
           <span
-            className="ml-auto px-2 py-1 rounded-full text-xs text-gray-700 bg-white border border-gray-200"
+            className="ml-auto px-2 py-1 rounded-full text-xs text-loop-dark bg-white border border-gray-300"
             title={`Mood: ${mood}`}
           >
             {mood}
@@ -80,16 +83,16 @@ const MemoryCard = ({ memory, onEdit, onDelete, viewMode = "default" }) => {
       </div>
 
       {viewMode !== "timeline" && (
-        <div className="flex justify-end gap-3 pt-2">
+        <div className="flex justify-end gap-4 pt-2">
           <button
             onClick={() => onEdit(memory)}
-            className="text-blue-500 text-sm hover:underline"
+            className="text-blue-600 text-sm font-medium hover:underline"
           >
             Edit
           </button>
           <button
             onClick={() => onDelete(memory.id)}
-            className="text-red-400 text-sm hover:underline"
+            className="text-red-500 text-sm font-medium hover:underline"
           >
             Delete
           </button>

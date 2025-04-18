@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import LayoutWrapper from '@/components/layout/LayoutWrapper';
 import Step0Intro from './Step0Intro';
 import Step1Topics from './Step1Topics';
 import Step2WhatTheyDid from './Step2WhatTheyDid';
@@ -13,22 +14,22 @@ const ReflectionWizard = () => {
     topics: [],
     whatTheyDid: [],
     howIFelt: [],
-    howIResponded: []
+    howIResponded: [],
   });
 
   const { addMemory } = useMemory();
 
   const handleUpdate = (category, updatedList) => {
-    setResponses(prev => ({ ...prev, [category]: updatedList }));
+    setResponses((prev) => ({ ...prev, [category]: updatedList }));
   };
 
-  const handleNext = () => setStep(prev => Math.min(prev + 1, 5));
-  const handleBack = () => setStep(prev => Math.max(prev - 1, 0));
+  const handleNext = () => setStep((prev) => Math.min(prev + 1, 5));
+  const handleBack = () => setStep((prev) => Math.max(prev - 1, 0));
 
   const handleSave = (memory) => {
     addMemory(memory);
     alert('Memory saved successfully!');
-    setStep(0); // Reset to intro after save
+    setStep(0);
   };
 
   const renderStep = () => {
@@ -51,34 +52,35 @@ const ReflectionWizard = () => {
   };
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center p-6 text-gray-800"
-      style={{ backgroundImage: "url('/src/assets/cloud-bg.jpg')" }}
-    >
-      <div className="max-w-3xl mx-auto bg-white bg-opacity-80 backdrop-blur-md rounded-2xl shadow-md p-6">
-        <header className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-pink-700">Guided Reflection</h1>
-          <p className="text-sm text-gray-600">
-            You're in a safe space to reflect. You can move at your own pace.
-          </p>
-        </header>
+    <LayoutWrapper hideHeader>
+      <div className="min-h-screen p-6 text-body">
+        <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-md p-6">
+          <header className="mb-6 text-center">
+            <h1 className="text-2xl font-bold text-accent">Guided Reflection</h1>
+            <p className="text-sm text-body">
+              You're in a safe space to reflect. You can move at your own pace.
+            </p>
+          </header>
 
-        {renderStep()}
+          {renderStep()}
 
-        {step > 0 && step < 5 && (
-          <div className="mt-8 flex justify-between">
-            {step > 1 ? (
-              <button onClick={handleBack} className="px-4 py-2 bg-pink-100 text-pink-700 rounded-full shadow">
-                Back
+          {step > 0 && step < 5 && (
+            <div className="mt-8 flex justify-between">
+              {step > 1 ? (
+                <button onClick={handleBack} className="px-4 py-2 bg-card text-accent rounded-full shadow">
+                  Back
+                </button>
+              ) : (
+                <div />
+              )}
+              <button onClick={handleNext} className="px-4 py-2 bg-accent text-white rounded-full shadow">
+                Next
               </button>
-            ) : <div />}
-            <button onClick={handleNext} className="px-4 py-2 bg-pink-600 text-white rounded-full shadow">
-              Next
-            </button>
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </LayoutWrapper>
   );
 };
 

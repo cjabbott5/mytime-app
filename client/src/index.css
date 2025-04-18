@@ -2,29 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Default global styling */
+/* 🌍 Global Base Styles */
 body {
-  @apply font-sans bg-loop-neutral text-loop-dark;
+  @apply font-sans;
+  background-color: var(--color-theme);
+  color: var(--color-text);
 }
 
-/* Optional utility class: white text stroke */
-.text-outline {
-  -webkit-text-stroke: 1px white;
-  text-stroke: 1px white;
-}
-
-/* 🎨 Theme CSS Variable Support */
+/* ✅ Theme Variables (default to Light Blue) */
 :root {
-  --color-theme: #2563eb; /* default to blue */
+  --color-theme: #93C5FD;       /* Light Blue background */
+  --color-accent: #2563EB;      /* Deep Blue accent */
+  --color-text: #1E3A8A;        /* Navy for contrast */
 }
 
-/* Use these utility-style classes in JSX */
+/* 🎨 Theme Utility Classes (Reusable Everywhere) */
 .bg-theme {
   background-color: var(--color-theme);
+}
+.bg-accent {
+  background-color: var(--color-accent);
 }
 .text-theme {
   color: var(--color-theme);
 }
+.text-accent {
+  color: var(--color-accent);
+}
+.text-body {
+  color: var(--color-text);
+}
 .border-theme {
   border-color: var(--color-theme);
+}
+.border-accent {
+  border-color: var(--color-accent);
+}
+
+/* 🖌️ Optional Fancy Utility */
+.text-outline {
+  -webkit-text-stroke: 1px white;
+  text-stroke: 1px white;
+}
+/* 🌟 Custom button utility */
+.btn {
+  @apply bg-accent text-white px-6 py-2 rounded-full hover:bg-accent-dark transition;
 }
