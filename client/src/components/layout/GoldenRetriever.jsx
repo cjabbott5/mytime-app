@@ -1,47 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import goldenRetriever from '../../assets/golden-retriever.gif';
 import ResizableGif from '../ui/ResizableGif';
+import Modal from '../ui/Modal'; // Reusable component for assistant UI
 
 export default function GoldenRetriever() {
-  const [hearts, setHearts] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [name, setName] = useState('');
 
-  // Create new hearts on click
-  const dropHeart = () => {
-    const id = Date.now();
-    // Random left position between 5% and 95%
-    const left = Math.random() * 90 + 5;
-    setHearts(prev => [...prev, { id, left }]);
-
-    // Remove each heart after 3s
-    setTimeout(() => {
-      setHearts(prev => prev.filter(h => h.id !== id));
-    }, 3000);
-  };
+  // Load stored name 
+  useEffect(() => {
+    const savedName = localStorage.getItem('goldenName');
+    setName(savedName || "Sunny"); // default fallback
+  }, []);
+  
 
   return (
     <>
-      {/* Floating hearts */}
-      {hearts.map((heart) => (
-  <div
-    key={heart.id}
-    className="absolute text-3xl text-white animate-float-down z-40 select-none drop-shadow-[0_0_2px_#1C3F66]"
-    style={{ left: `${heart.left}%`, top: '80px' }}
-  >
-    ♥
-  </div>
-))}
-
-      {/*
-        The “fixed” container sets an initial position on the page.
-        onClick -> dropHeart
-        Inside this <div>, we render <ResizableGif> which uses Rnd to handle drag + resize.
-      */}
+      {/* Golden Retriever Avatar */}
       <div
         className="fixed top-12 left-4 z-30 cursor-pointer"
-        onClick={dropHeart}
+        onClick={() => setShowModal(true)}
+        title={`Click ${name} to open your assistant`}
       >
         <ResizableGif gif={goldenRetriever} />
       </div>
+
+      {/* Assistant Modal */}
+      {showModal && (
+        <Modal onClose={() => setShowModal(false)} title={`Hi, I'm ${name}!`}>
+          <p className="mb-4">How can I support you right now?</p>
+          <div className="space-y-2">
+            <button
+              className="w-full p-2 bg-pink-200 rounded"
+              onClick={() => alert("Opening grounding tools...")}
+            >
+              🌿 Ground Me
+            </button>
+            <button
+              className="w-full p-2 bg-blue-200 rounded"
+              onClick={() => alert("Starting reflection...")}
+            >
+              🪞 Gentle Reflection
+            </button>
+            <button
+              className="w-full p-2 bg-yellow-100 rounded"
+              onClick={() => alert("Launching journaling...")}
+            >
+              📓 Start Journaling
+            </button>
+            <button
+              className="w-full p-2 bg-gray-100 rounded"
+              onClick={() => setShowModal(false)}
+            >
+              ❌ Not now
+            </button>
+          </div>
+        </Modal>
+      )}
     </>
   );
 }

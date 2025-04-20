@@ -31,7 +31,7 @@ export default function MemoryDetail() {
       </div>
 
       <div className="prose prose-lg max-w-none bg-white/90 backdrop-blur-md rounded-xl p-6 shadow mb-8">
-        <p>{memory.description || 'No description provided.'}</p>
+      <p>{memory.content || 'No content provided.'}</p>
       </div>
 
       {memory.image && (

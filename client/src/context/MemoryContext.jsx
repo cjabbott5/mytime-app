@@ -64,17 +64,25 @@ export const MemoryProvider = ({ children }) => {
   const updateMemory = async (updated) => {
     const uid = getCurrentUserId();
     if (!uid) return;
-
+  
     try {
-      const docRef = doc(db, 'users', uid, 'memories', updated.id);
-      await updateDoc(docRef, updated);
+      const { id, ...data } = updated;
+      const docRef = doc(db, 'users', uid, 'memories', id);
+      await updateDoc(docRef, data);
+  
+      // 🛠 Add null checks before updating local state
       setMemories((prev) =>
-        prev.map((m) => (m.id === updated.id ? updated : m))
+        Array.isArray(prev)
+          ? prev.map((m) => (m.id === id ? { ...data, id } : m))
+          : []
       );
     } catch (err) {
-      console.error('Error updating memory:', err);
+      console.error('❌ Error updating memory:', err);
     }
   };
+  
+  
+  
 
   return (
     <MemoryContext.Provider

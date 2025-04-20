@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import themeConfig from '@/config/themeConfig';
 import { useTheme } from '@/context/ThemeContext';
+import CustomThemeBuilder from "@/components/settings/CustomThemeBuilder";
+
 
 export default function Settings() {
   const [displayName, setDisplayName] = useState('');
@@ -40,38 +42,40 @@ export default function Settings() {
               placeholder="Enter your display name"
             />
           </div>
+{/* Theme Selector */}
+<div>
+  <label className="block text-sm font-medium text-body mb-2">
+    Choose a Theme
+  </label>
+  <div className="grid grid-cols-3 gap-4">
+    {Object.entries(themeConfig).map(([key, theme]) => {
+      const previewBg = theme.bgImage?.startsWith('linear')
+        ? theme.bgImage
+        : `url(${theme.bgImage})`;
 
-          {/* Theme Selector */}
-          <div>
-            <label className="block text-sm font-medium text-body mb-2">
-              Choose a Theme
-            </label>
-            <div className="grid grid-cols-3 gap-4">
-              {Object.entries(themeConfig).map(([key, theme]) => {
-                const previewBg = theme.bgImage?.startsWith('linear')
-                  ? theme.bgImage
-                  : `url(${theme.bgImage})`;
-
-                return (
-                  <button
-                    key={key}
-                    onClick={() => setSelectedTheme(key)}
-                    className={`rounded-lg overflow-hidden shadow-md border-4 transition-all ${
-                      selectedTheme === key ? 'border-accent scale-105' : 'border-transparent'
-                    }`}
-                  >
-                    <div
-                      className="h-24 w-full bg-cover bg-center"
-                      style={{ backgroundImage: previewBg }}
-                    />
-                    <div className="text-center p-2 text-sm text-body bg-white font-medium">
-                      {theme.name}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+      return (
+        <button
+          key={key}
+          onClick={() => setSelectedTheme(key)}
+          className={`rounded-lg overflow-hidden shadow-md border-4 transition-all ${
+            selectedTheme === key ? 'border-accent scale-105' : 'border-transparent'
+          }`}
+        >
+          <div
+            className="h-24 w-full bg-cover bg-center"
+            style={{ backgroundImage: previewBg }}
+          />
+          <div className="text-center p-2 text-sm text-body bg-white font-medium">
+            {theme.name}
           </div>
+        </button>
+      );
+    })}
+  </div>
+</div>
+
+{/* 🎨 Custom Theme Builder */}
+<CustomThemeBuilder />
         </div>
       </div>
     </div>

@@ -73,7 +73,7 @@ function LandingLink({ to, title, desc, icon }) {
   return (
     <Link to={to}>
       <div className="bg-white/90 rounded-2xl p-10 shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all cursor-pointer h-full flex flex-col justify-between items-center text-center min-h-[320px]">
-        <div className="mb-5 text-accent">{React.cloneElement(icon, { className: "text-5xl text-accent" })}        </div>
+        <div className="mb-5 text-accent">{React.cloneElement(icon, { className: "text-5xl text-accent" })}</div>
         <h3 className="text-accent font-extrabold text-3xl mb-3">{title}</h3>
         <p className="text-lg font-medium text-body">{desc}</p>
       </div>

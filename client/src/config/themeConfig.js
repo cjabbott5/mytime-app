@@ -126,6 +126,19 @@ const themeConfig = {
       "--color-text": "#F9FAFB",
     },
   },
+
+  // 💥 CUSTOM THEME PLACEHOLDER
+  custom: {
+    name: "Custom Theme",
+    bgImage: "linear-gradient(to bottom right, #E0E0E0, #FFFFFF)",
+    isCustom: true, // 👈 extra flag for special handling
+    colors: {
+      "--color-theme": "#E0E0E0",
+      "--color-accent": "#CCCCCC",
+      "--color-accent-dark": "#AAAAAA",
+      "--color-text": "#333333",
+    },
+  },
 };
 
 export default themeConfig;

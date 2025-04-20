@@ -168,7 +168,7 @@ const MemoryForm = ({ memoryToEdit = null, onClose }) => {
     e.preventDefault();
     if (uploadError) return;
   
-    const birthYear = 1998; // Replace with user birthYear if available
+    const birthYear = 1998; // Replace with dynamic user data later
     let finalYear = parseInt(formData.year);
     let finalAge = parseInt(formData.age);
   
@@ -179,10 +179,20 @@ const MemoryForm = ({ memoryToEdit = null, onClose }) => {
       finalAge = finalYear - birthYear;
     }
   
+    // Generate fallback date
+    let dateString = null;
+    if (Number.isInteger(finalYear)) {
+      dateString = new Date(finalYear, 0, 1).toISOString(); // Jan 1 of that year
+    }
+  
+    console.log("💬 About to save content:", formData.content);
+
     const processedForm = {
       ...formData,
+      content: formData.content, // ✅ add this
       ...(Number.isInteger(finalYear) && { year: finalYear }),
       ...(Number.isInteger(finalAge) && { age: finalAge }),
+      ...(dateString && { date: dateString }),
     };
   
     console.log("📝 Final form data:", processedForm);
@@ -197,7 +207,7 @@ const MemoryForm = ({ memoryToEdit = null, onClose }) => {
     onClose();
     setFormData(initialForm);
     setPreviewImg("");
-  };  
+  };
   
 
   return (
@@ -342,6 +352,8 @@ const MemoryForm = ({ memoryToEdit = null, onClose }) => {
         rows="5"
         className="w-full p-3 border border-gray-300 rounded-md text-base"
       />
+      <p className="text-sm text-gray-500">Debug: {formData.content}</p>
+
 
       {/* Buttons */}
       <div className="flex justify-between items-center pt-4">

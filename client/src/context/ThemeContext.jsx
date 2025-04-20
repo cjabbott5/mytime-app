@@ -1,45 +1,107 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import themeConfig from "@/config/themeConfig";
-import { useUserData } from "@/context/UserDataContext"; // 👈 must exist!
+import { useUserData } from "@/context/UserDataContext";
+import { useRef } from "react";
 
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const { userData, updateUserData } = useUserData(); // 👈 from your Firebase layer
+  const { userData, updateUserData } = useUserData();
 
-  // Initial state from localStorage OR default
+  const didInitTheme = useRef(false);
+
+  // Selected theme name (from localStorage or fallback to "blue")
   const [selectedTheme, setSelectedTheme] = useState(() => {
     const stored = localStorage.getItem("theme");
     return stored && themeConfig[stored] ? stored : "blue";
   });
 
-  // 🧠 Pull Firebase theme if logged in + valid
+  // Custom theme colors (if selectedTheme === 'custom')
+  const [customTheme, setCustomTheme] = useState(() => {
+    const stored = localStorage.getItem("customTheme");
+    return stored ? JSON.parse(stored) : null;
+  });
+
+  // Load user data from Firebase (but DON'T trigger effects!)
   useEffect(() => {
-    if (userData?.theme && themeConfig[userData.theme]) {
+    // ✅ Prevent re-running this logic after initial load
+    if (didInitTheme.current) return;
+  
+    let updated = false;
+  
+    if (
+      userData?.theme &&
+      themeConfig[userData.theme] &&
+      userData.theme !== selectedTheme
+    ) {
       setSelectedTheme(userData.theme);
+      updated = true;
+    }
+  
+    if (
+      userData?.customTheme &&
+      JSON.stringify(userData.customTheme) !== JSON.stringify(customTheme)
+    ) {
+      setCustomTheme(userData.customTheme);
+      updated = true;
+    }
+  
+    // ✅ Set the lock AFTER we potentially call state setters
+    if (updated) {
+      didInitTheme.current = true;
     }
   }, [userData]);
+  
+  
 
-  // 🎨 Apply theme to <html> + persist to localStorage + Firestore
+  // 💅 Apply theme colors to :root
   useEffect(() => {
-    const currentTheme = themeConfig[selectedTheme];
-    if (!currentTheme) return;
+    const current =
+      selectedTheme === "custom" && customTheme
+        ? customTheme
+        : themeConfig[selectedTheme];
 
-    // Apply CSS vars
-    Object.entries(currentTheme.colors).forEach(([key, value]) => {
+    if (!current) return;
+
+    // Inject all CSS variables
+    Object.entries(current.colors).forEach(([key, value]) => {
       document.documentElement.style.setProperty(key, value);
     });
 
+    // Save to localStorage
     localStorage.setItem("theme", selectedTheme);
-
-    // 🔄 Sync with Firebase if needed
-    if (userData && userData.theme !== selectedTheme) {
-      updateUserData({ theme: selectedTheme });
+    if (selectedTheme === "custom" && customTheme) {
+      localStorage.setItem("customTheme", JSON.stringify(customTheme));
     }
-  }, [selectedTheme, userData]);
+  }, [selectedTheme, customTheme]);
 
+  // 🔄 Sync Firebase (split to avoid infinite loops)
+  useEffect(() => {
+    if (!userData) return;
+
+    const needsThemeUpdate = userData.theme !== selectedTheme;
+    const needsCustomUpdate =
+      selectedTheme === "custom" &&
+      JSON.stringify(userData.customTheme) !== JSON.stringify(customTheme);
+
+    if (needsThemeUpdate || needsCustomUpdate) {
+      const updates = {};
+      if (needsThemeUpdate) updates.theme = selectedTheme;
+      if (needsCustomUpdate) updates.customTheme = customTheme;
+
+      updateUserData(updates);
+    }
+  }, [selectedTheme, customTheme]); // 🚫 no userData in deps!
+  
   return (
-    <ThemeContext.Provider value={{ selectedTheme, setSelectedTheme }}>
+    <ThemeContext.Provider
+      value={{
+        selectedTheme,
+        setSelectedTheme,
+        customTheme,
+        setCustomTheme,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );

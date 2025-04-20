@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import LayoutWrapper from '@/components/layout/LayoutWrapper';
 import Header from '@/components/layout/Header'; // ✅ Add Header
 import loopLogo from '@/assets/loop-logo-large2.png';
+import BoxBreathing from './breathing/BoxBreathing';
+import FourSevenEight from './breathing/FourSevenEight';
+import MindfulBreathing from './breathing/MindfulBreathing';
+import PacedBreathing from './breathing/PacedBreathing';
 
 import {
   FiWind,

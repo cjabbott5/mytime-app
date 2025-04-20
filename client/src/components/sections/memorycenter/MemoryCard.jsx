@@ -1,5 +1,5 @@
 import React from "react";
-import classNames from "classnames"; // optional but handy for conditional classes
+import classNames from "classnames";
 
 const moodColors = {
   positive: "ring-yellow-300",
@@ -40,9 +40,22 @@ const getTagTheme = (tag) => {
 };
 
 const MemoryCard = ({ memory, onEdit, onDelete, viewMode = "default" }) => {
-  const { title, date, image, tags = [], mood } = memory;
+  const { title, date, year, image, tags = [], mood } = memory;
+
   const moodGroup = getMoodGroup(mood);
   const moodRing = moodColors[moodGroup] || "ring-gray-200";
+
+  // 🧠 Safe fallback for date display
+  let displayDate = "No date available";
+  if (date && !isNaN(new Date(date))) {
+    displayDate = new Date(date).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } else if (year) {
+    displayDate = `Year: ${year}`;
+  }
 
   return (
     <div
@@ -61,7 +74,7 @@ const MemoryCard = ({ memory, onEdit, onDelete, viewMode = "default" }) => {
       )}
 
       <div className="text-xl font-semibold text-loop-primary">{title}</div>
-      <div className="text-sm text-loop-dark/70">{new Date(date).toDateString()}</div>
+      <div className="text-sm text-loop-dark/70">{displayDate}</div>
 
       <div className="flex flex-wrap gap-2">
         {tags.map((tag, i) => (
@@ -82,22 +95,26 @@ const MemoryCard = ({ memory, onEdit, onDelete, viewMode = "default" }) => {
         )}
       </div>
 
-      {viewMode !== "timeline" && (
-        <div className="flex justify-end gap-4 pt-2">
-          <button
-            onClick={() => onEdit(memory)}
-            className="text-blue-600 text-sm font-medium hover:underline"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => onDelete(memory.id)}
-            className="text-red-500 text-sm font-medium hover:underline"
-          >
-            Delete
-          </button>
-        </div>
-      )}
+      {viewMode !== "timeline" && (onEdit || onDelete) && (
+  <div className="flex justify-end gap-4 pt-2">
+    {onEdit && (
+      <button
+        onClick={() => onEdit(memory)}
+        className="text-blue-600 text-sm font-medium hover:underline"
+      >
+        Edit
+      </button>
+    )}
+    {onDelete && (
+      <button
+        onClick={() => onDelete(memory.id)}
+        className="text-red-500 text-sm font-medium hover:underline"
+      >
+        Delete
+      </button>
+    )}
+  </div>
+)}
     </div>
   );
 };

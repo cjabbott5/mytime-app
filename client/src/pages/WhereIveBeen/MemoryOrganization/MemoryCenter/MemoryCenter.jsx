@@ -6,6 +6,7 @@ import MemoryCard from "@/components/sections/memorycenter/MemoryCard";
 import MemoryForm from "@/components/sections/memorycenter/MemoryForm";
 import TimelineView from "@/components/sections/memorycenter/TimelineView";
 import AgeTimelineBuilder from "@/components/sections/memorycenter/AgeTimelineBuilder";
+import loopLogoLarge from '@/assets/loop-logo-large2.png';
 
 const MemoryCenter = () => {
   const { memories, deleteMemory } = useMemory();
@@ -49,8 +50,9 @@ const MemoryCenter = () => {
     return (
       <LayoutWrapper hideHeader>
         <div className="min-h-screen flex flex-col items-center justify-center px-4 text-body">
-          <div className="max-w-md bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl text-center space-y-4">
-            <h1 className="text-2xl font-bold text-accent">Welcome to My Memory Center</h1>
+        <div className="max-w-md bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-xl text-center space-y-6 transform scale-[1.8] transition-transform duration-500 ease-in-out">
+        <img src={loopLogoLarge} className="mx-auto w-44 sm:w-56 opacity-90" />
+            <h1 className="text-2xl font-bold text-accent-dark">Welcome to My Memory Center</h1>
             <p>
               Here, you can reflect on personal memories and emotions. Please note that some recollections could be intense or triggering.
             </p>
@@ -62,7 +64,7 @@ const MemoryCenter = () => {
             </p>
             <button
               onClick={() => setHasAgreed(true)}
-              className="bg-accent text-white px-6 py-2 rounded-md font-semibold hover:bg-theme transition"
+              className="bg-accent-dark text-white px-6 py-2 rounded-md font-semibold hover:bg-theme transition"
             >
               I Understand, Let Me Begin
             </button>
@@ -73,105 +75,115 @@ const MemoryCenter = () => {
   }
 
   return (
-    <LayoutWrapper>
-      <div className="p-6 min-h-screen text-body">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold text-accent">My Memory Center</h1>
-          <button
-            onClick={handleAddNew}
-            className="bg-accent text-white px-4 py-2 rounded-md hover:bg-theme"
-          >
-            Add Memory
-          </button>
-        </div>
-
-        {/* View Switcher */}
-        <div className="flex gap-4 mb-6 flex-wrap">
-          {["card", "timeline", "map", "age"].map((view) => (
+    <LayoutWrapper hideHeader>
+      <div className="transform scale-[1.1] origin-top px-6 sm:px-12 min-h-screen text-body">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-6 pt-10">
+            <h1 className="text-2xl font-semibold text-accent-dark">My Memory Center</h1>
+            <p className="text-lg text-loop-dark mt-2">
+  Reflect, revisit, and reclaim the moments that shaped you.
+</p>
+<p className="text-sm text-accent-dark mt-1 italic">
+  This space is yours. Move gently.
+</p>
             <button
-              key={view}
-              onClick={() => setActiveView(view)}
-              className={`px-4 py-2 rounded-md ${
-                activeView === view
-                  ? "bg-accent text-white"
-                  : "bg-white border text-accent"
-              }`}
+              onClick={handleAddNew}
+              className="bg-accent-dark text-white px-4 py-2 rounded-md hover:bg-theme"
             >
-              {view.charAt(0).toUpperCase() + view.slice(1)} View
+              Add Memory
             </button>
-          ))}
-        </div>
-
-        {showForm && (
-          <MemoryForm
-            memoryToEdit={editingMemory}
-            onClose={() => {
-              setEditingMemory(null);
-              setShowForm(false);
-            }}
-          />
-        )}
-
-        {/* Dynamic View Rendering */}
-        {activeView === "card" && (
-          <>
-            <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-6 space-y-2 md:space-y-0">
-              <input
-                type="text"
-                placeholder="Search by title..."
-                className="px-4 py-2 border border-card rounded-md"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Filter by tag (e.g. #joy)"
-                className="px-4 py-2 border border-card rounded-md"
-                value={filterTag}
-                onChange={(e) => setFilterTag(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Filter by emotion (e.g. joyful)"
-                className="px-4 py-2 border border-card rounded-md"
-                value={filterEmotion}
-                onChange={(e) => setFilterEmotion(e.target.value)}
-              />
-              <select
-                className="px-4 py-2 border border-card rounded-md"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+          </div>
+  
+          {/* View Switcher */}
+          <div className="flex gap-4 mb-6 flex-wrap">
+            {["card", "timeline", "map", "age"].map((view) => (
+              <button
+                key={view}
+                onClick={() => setActiveView(view)}
+                className={`px-4 py-2 rounded-md ${
+                  activeView === view
+                    ? "bg-accent-dark text-white"
+                    : "bg-white border text-accent-dark"
+                }`}
               >
-                <option value="date-desc">Newest First</option>
-                <option value="date-asc">Oldest First</option>
-              </select>
-            </div>
-
-            {filteredMemories.length === 0 ? (
-              <p className="text-gray-500 italic">
-                No memories match your current filters. Try clearing or changing the filters above.
-              </p>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredMemories.map((memory) => (
-                  <MemoryCard
-                    key={memory.id}
-                    memory={memory}
-                    onEdit={handleEdit}
-                    onDelete={deleteMemory}
-                  />
-                ))}
+                {view.charAt(0).toUpperCase() + view.slice(1)} View
+              </button>
+            ))}
+          </div>
+  
+          {/* Memory Form */}
+          {showForm && (
+            <MemoryForm
+              memoryToEdit={editingMemory}
+              onClose={() => {
+                setEditingMemory(null);
+                setShowForm(false);
+              }}
+            />
+          )}
+  
+          {/* Memory View */}
+          {activeView === "card" && (
+            <>
+              <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-6 space-y-2 md:space-y-0">
+                <input
+                  type="text"
+                  placeholder="Search by title..."
+                  className="px-4 py-2 border border-card rounded-md"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Filter by tag (e.g. #joy)"
+                  className="px-4 py-2 border border-card rounded-md"
+                  value={filterTag}
+                  onChange={(e) => setFilterTag(e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Filter by emotion (e.g. joyful)"
+                  className="px-4 py-2 border border-card rounded-md"
+                  value={filterEmotion}
+                  onChange={(e) => setFilterEmotion(e.target.value)}
+                />
+                <select
+                  className="px-4 py-2 border border-card rounded-md"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="date-desc">Newest First</option>
+                  <option value="date-asc">Oldest First</option>
+                </select>
               </div>
-            )}
-          </>
-        )}
-
-        {activeView === "timeline" && <TimelineView memories={memories} />}
-        {activeView === "map" && <MapView />}
-        {activeView === "age" && <AgeTimelineBuilder />}
+  
+              {filteredMemories.length === 0 ? (
+                <p className="text-gray-500 italic">
+                  No memories match your current filters. Try clearing or changing the filters above.
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredMemories.map((memory) => (
+                    <MemoryCard
+                      key={memory.id}
+                      memory={memory}
+                      onEdit={handleEdit}
+                      onDelete={deleteMemory}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+  
+          {activeView === "timeline" && <TimelineView memories={memories} />}
+          {activeView === "map" && <MapView />}
+          {activeView === "age" && <AgeTimelineBuilder />}
+        </div>
       </div>
     </LayoutWrapper>
-  );
+  );  
 };
 
 export default MemoryCenter;
